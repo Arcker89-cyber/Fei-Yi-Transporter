@@ -19,6 +19,7 @@ document.getElementById("tripForm").addEventListener("submit", async (e) => {
     time: document.getElementById("time").value,
     seats: Number(document.getElementById("seats").value),
     price: Number(document.getElementById("price").value),
+    memberDiscount: Number(document.getElementById("memberDiscount").value),
     active: document.getElementById("active").checked,
     createdAt: new Date().toISOString()
   };
@@ -34,6 +35,11 @@ document.getElementById("tripForm").addEventListener("submit", async (e) => {
     return;
   }
 
+  if (data.memberDiscount < 0 || data.memberDiscount > 100) {
+    alert("⚠️ ส่วนลดสมาชิกต้องอยู่ระหว่าง 0-100%");
+    return;
+  }
+
   try {
     await addDoc(collection(db, "trips"), data);
     alert("✅ เพิ่มรอบรถเรียบร้อย");
@@ -41,6 +47,7 @@ document.getElementById("tripForm").addEventListener("submit", async (e) => {
     // Reset form
     document.getElementById("tripForm").reset();
     document.getElementById("active").checked = true;
+    document.getElementById("memberDiscount").value = 10;
     
     // Reload list
     await loadTrips();
@@ -94,12 +101,15 @@ async function loadTrips() {
       if (isFull) seatsClass = 'full';
       else if (isLowSeats) seatsClass = 'low';
 
+      const memberDiscount = trip.memberDiscount || 0;
+
       html += `
         <div class="trip-card ${cardClass}">
           <div class="trip-info">
             <h3>🚐 ${trip.route}</h3>
             <p><strong>🕐 เวลา:</strong> ${trip.time}</p>
             <p><strong>💰 ราคา:</strong> ฿${trip.price}</p>
+            <p><strong>🎁 ส่วนลดสมาชิก:</strong> ${memberDiscount}%</p>
             <p><strong>💺 ที่นั่งว่าง:</strong> <span class="seats-info ${seatsClass}">${trip.seats} ที่นั่ง</span></p>
           </div>
           <div class="trip-status">
@@ -153,6 +163,7 @@ window.openEditModal = async (tripId) => {
     document.getElementById("editTime").value = tripData.time;
     document.getElementById("editSeats").value = tripData.seats;
     document.getElementById("editPrice").value = tripData.price;
+    document.getElementById("editMemberDiscount").value = tripData.memberDiscount || 0;
     document.getElementById("editActive").checked = tripData.active;
 
     // แสดง Modal
@@ -179,6 +190,7 @@ document.getElementById("editForm").addEventListener("submit", async (e) => {
     time: document.getElementById("editTime").value,
     seats: Number(document.getElementById("editSeats").value),
     price: Number(document.getElementById("editPrice").value),
+    memberDiscount: Number(document.getElementById("editMemberDiscount").value),
     active: document.getElementById("editActive").checked
   };
 
@@ -189,6 +201,11 @@ document.getElementById("editForm").addEventListener("submit", async (e) => {
 
   if (data.price < 0) {
     alert("⚠️ ราคาต้องไม่ติดลบ");
+    return;
+  }
+
+  if (data.memberDiscount < 0 || data.memberDiscount > 100) {
+    alert("⚠️ ส่วนลดสมาชิกต้องอยู่ระหว่าง 0-100%");
     return;
   }
 
