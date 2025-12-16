@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <title>จองคิวรถ</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <h1>🚐 ระบบจองคิวรถ</h1>
+
+  <section id="route">
+    <label>เลือกรอบรถ</label>
+    <select id="tripSelect"></select>
+  </section>
+
+  <section id="booking">
+    <input type="text" id="name" placeholder="ชื่อผู้จอง">
+    <input type="tel" id="phone" placeholder="เบอร์โทร">
+    <input type="number" id="seats" placeholder="จำนวนที่นั่ง" min="1">
+
+    <button onclick="bookQueue()">จองคิว</button>
+  </section>
+
+  <section id="result"></section>
+
+  <script src="js/data.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

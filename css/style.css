@@ -1,0 +1,29 @@
+body {
+  font-family: sans-serif;
+  max-width: 400px;
+  margin: auto;
+  padding: 20px;
+}
+
+h1 {
+  text-align: center;
+}
+
+input, select, button {
+  width: 100%;
+  padding: 10px;
+  margin: 6px 0;
+}
+
+button {
+  background: #2c7be5;
+  color: white;
+  border: none;
+  cursor: pointer;
+}
+
+#result {
+  margin-top: 15px;
+  background: #e6f4ea;
+  padding: 10px;
+}
