@@ -20,4 +20,4 @@ export const analytics = getAnalytics(app);
 export const auth = getAuth(app);
 export const db = getFirestore(app);
 
-console.log("🔥 Firebase initialized:", app.name);
+console.log("ðŸ”¥ Firebase initialized:", app.name);
