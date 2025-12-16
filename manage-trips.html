@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>🚐 จัดการรอบรถ | Fei Yi Transporter</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/admin-style.css">
+</head>
+<body>
+
+  <!-- Sidebar Navigation -->
+  <div class="sidebar">
+    <div class="logo">
+      <h2>🚐 Admin Panel</h2>
+    </div>
+    
+    <nav class="nav-menu">
+      <a href="dashboard.html" class="nav-item">
+        <span class="icon">📊</span>
+        <span>Dashboard</span>
+      </a>
+      <a href="manage-trips.html" class="nav-item active">
+        <span class="icon">🚐</span>
+        <span>จัดการรอบรถ</span>
+      </a>
+      <a href="bookings.html" class="nav-item">
+        <span class="icon">📋</span>
+        <span>รายการจอง</span>
+      </a>
+      <a href="index.html" class="nav-item" style="margin-top: auto;">
+        <span class="icon">🏠</span>
+        <span>กลับหน้าหลัก</span>
+      </a>
+    </nav>
+  </div>
+
+  <!-- Main Content -->
+  <div class="main-content">
+    <header class="content-header">
+      <h1>🚐 จัดการรอบรถ</h1>
+      <p>เพิ่ม แก้ไข ลบ รอบรถ</p>
+    </header>
+
+    <!-- Form เพิ่มรอบรถ -->
+    <div class="content-card">
+      <div class="card-header">
+        <h2>➕ เพิ่มรอบรถใหม่</h2>
+      </div>
+
+      <form id="tripForm">
+        <div class="form-group">
+          <label for="route">📍 เส้นทาง</label>
+          <input 
+            type="text" 
+            id="route" 
+            placeholder="เช่น กรุงเทพ → อุดรธานี" 
+            required
+          >
+        </div>
+
+        <div class="form-group">
+          <label for="time">🕐 เวลา</label>
+          <input 
+            type="time" 
+            id="time" 
+            required
+          >
+        </div>
+
+        <div class="form-group">
+          <label for="seats">💺 จำนวนที่นั่ง</label>
+          <input 
+            type="number" 
+            id="seats" 
+            placeholder="เช่น 10" 
+            min="1"
+            required
+          >
+        </div>
+
+        <div class="form-group">
+          <label for="price">💰 ราคา (บาท)</label>
+          <input 
+            type="number" 
+            id="price" 
+            placeholder="เช่น 500" 
+            min="0"
+            required
+          >
+        </div>
+
+        <div class="form-group checkbox-group">
+          <input type="checkbox" id="active" checked>
+          <label for="active">✅ เปิดใช้งานรอบรถนี้</label>
+        </div>
+
+        <button type="submit" class="btn-primary" style="width: 100%;">
+          💾 บันทึกรอบรถ
+        </button>
+      </form>
+    </div>
+
+    <!-- รายการรอบรถทั้งหมด -->
+    <div class="content-card">
+      <div class="card-header">
+        <h2>📋 รายการรอบรถทั้งหมด</h2>
+      </div>
+      
+      <div id="tripsList" class="loading-container">
+        <div class="loading"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal แก้ไขรอบรถ -->
+  <div id="editModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>✏️ แก้ไขรอบรถ</h2>
+        <button class="close-modal" onclick="closeEditModal()">✕</button>
+      </div>
+
+      <form id="editForm">
+        <input type="hidden" id="editTripId">
+        
+        <div class="form-group">
+          <label for="editRoute">📍 เส้นทาง</label>
+          <input type="text" id="editRoute" required>
+        </div>
+
+        <div class="form-group">
+          <label for="editTime">🕐 เวลา</label>
+          <input type="time" id="editTime" required>
+        </div>
+
+        <div class="form-group">
+          <label for="editSeats">💺 จำนวนที่นั่ง</label>
+          <input type="number" id="editSeats" min="0" required>
+        </div>
+
+        <div class="form-group">
+          <label for="editPrice">💰 ราคา (บาท)</label>
+          <input type="number" id="editPrice" min="0" required>
+        </div>
+
+        <div class="form-group checkbox-group">
+          <input type="checkbox" id="editActive">
+          <label for="editActive">✅ เปิดใช้งานรอบรถนี้</label>
+        </div>
+
+        <div style="display: flex; gap: 10px;">
+          <button type="submit" class="btn-success" style="flex: 1;">
+            💾 บันทึกการแก้ไข
+          </button>
+          <button type="button" class="btn-secondary" onclick="closeEditModal()">
+            ยกเลิก
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script type="module" src="js/manage-trips.js"></script>
+</body>
+</html>

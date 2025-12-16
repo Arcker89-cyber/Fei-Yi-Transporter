@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>🎛️ Admin Dashboard | Fei Yi Transporter</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/admin-style.css">
+</head>
+<body>
+
+  <!-- Sidebar Navigation -->
+  <div class="sidebar">
+    <div class="logo">
+      <h2>🚐 Admin Panel</h2>
+    </div>
+    
+    <nav class="nav-menu">
+      <a href="dashboard.html" class="nav-item active">
+        <span class="icon">📊</span>
+        <span>Dashboard</span>
+      </a>
+      <a href="manage-trips.html" class="nav-item">
+        <span class="icon">🚐</span>
+        <span>จัดการรอบรถ</span>
+      </a>
+      <a href="bookings.html" class="nav-item">
+        <span class="icon">📋</span>
+        <span>รายการจอง</span>
+      </a>
+      <a href="index.html" class="nav-item" style="margin-top: auto;">
+        <span class="icon">🏠</span>
+        <span>กลับหน้าหลัก</span>
+      </a>
+    </nav>
+  </div>
+
+  <!-- Main Content -->
+  <div class="main-content">
+    <header class="content-header">
+      <h1>📊 Dashboard</h1>
+      <p>ภาพรวมระบบจองคิวรถ</p>
+    </header>
+
+    <!-- Stats Cards -->
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-icon" style="background: #4CAF50;">🚐</div>
+        <div class="stat-info">
+          <h3 id="totalTrips">-</h3>
+          <p>รอบรถทั้งหมด</p>
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-icon" style="background: #2196F3;">✅</div>
+        <div class="stat-info">
+          <h3 id="activeTrips">-</h3>
+          <p>รอบรถที่เปิดใช้งาน</p>
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-icon" style="background: #FF9800;">📋</div>
+        <div class="stat-info">
+          <h3 id="totalBookings">-</h3>
+          <p>จองทั้งหมด (วันนี้)</p>
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-icon" style="background: #9C27B0;">💺</div>
+        <div class="stat-info">
+          <h3 id="totalSeatsBooked">-</h3>
+          <p>ที่นั่งที่จองแล้ว</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Trips Overview -->
+    <div class="content-card">
+      <div class="card-header">
+        <h2>🚐 ภาพรวมรอบรถ</h2>
+        <button class="btn-primary" onclick="location.href='manage-trips.html'">
+          + เพิ่มรอบรถ
+        </button>
+      </div>
+      
+      <div id="tripsOverview" class="loading-container">
+        <div class="loading"></div>
+      </div>
+    </div>
+
+    <!-- Recent Bookings -->
+    <div class="content-card">
+      <div class="card-header">
+        <h2>📋 การจองล่าสุด</h2>
+        <button class="btn-secondary" onclick="location.href='bookings.html'">
+          ดูทั้งหมด →
+        </button>
+      </div>
+      
+      <div id="recentBookings" class="loading-container">
+        <div class="loading"></div>
+      </div>
+    </div>
+  </div>
+
+  <script type="module" src="js/dashboard.js"></script>
+</body>
+</html>

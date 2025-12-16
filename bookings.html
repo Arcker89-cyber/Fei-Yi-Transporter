@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>📋 รายการจอง | Fei Yi Transporter</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/admin-style.css">
+</head>
+<body>
+
+  <!-- Sidebar Navigation -->
+  <div class="sidebar">
+    <div class="logo">
+      <h2>🚐 Admin Panel</h2>
+    </div>
+    
+    <nav class="nav-menu">
+      <a href="dashboard.html" class="nav-item">
+        <span class="icon">📊</span>
+        <span>Dashboard</span>
+      </a>
+      <a href="manage-trips.html" class="nav-item">
+        <span class="icon">🚐</span>
+        <span>จัดการรอบรถ</span>
+      </a>
+      <a href="bookings.html" class="nav-item active">
+        <span class="icon">📋</span>
+        <span>รายการจอง</span>
+      </a>
+      <a href="index.html" class="nav-item" style="margin-top: auto;">
+        <span class="icon">🏠</span>
+        <span>กลับหน้าหลัก</span>
+      </a>
+    </nav>
+  </div>
+
+  <!-- Main Content -->
+  <div class="main-content">
+    <header class="content-header">
+      <h1>📋 รายการจองทั้งหมด</h1>
+      <p>ดูและจัดการการจองคิว</p>
+    </header>
+
+    <!-- Filter Section -->
+    <div class="content-card">
+      <div class="card-header">
+        <h2>🔍 ค้นหา & กรอง</h2>
+      </div>
+
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px;">
+        <div class="form-group">
+          <label for="filterTrip">🚐 รอบรถ</label>
+          <select id="filterTrip">
+            <option value="">ทั้งหมด</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="filterDate">📅 วันที่</label>
+          <input type="date" id="filterDate">
+        </div>
+
+        <div class="form-group">
+          <label for="searchPhone">📞 ค้นหาเบอร์โทร</label>
+          <input type="tel" id="searchPhone" placeholder="08xxxxxxxx">
+        </div>
+
+        <div class="form-group">
+          <label>&nbsp;</label>
+          <button class="btn-primary" onclick="applyFilters()" style="width: 100%;">
+            🔍 ค้นหา
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bookings List -->
+    <div class="content-card">
+      <div class="card-header">
+        <h2>📋 รายการจอง</h2>
+        <div style="display: flex; gap: 10px; align-items: center;">
+          <span id="bookingCount" style="color: #7f8c8d;">0 รายการ</span>
+        </div>
+      </div>
+      
+      <div id="bookingsList" class="loading-container">
+        <div class="loading"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal รายละเอียดการจอง -->
+  <div id="detailModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>📋 รายละเอียดการจอง</h2>
+        <button class="close-modal" onclick="closeDetailModal()">✕</button>
+      </div>
+
+      <div id="bookingDetail"></div>
+    </div>
+  </div>
+
+  <script type="module" src="js/bookings.js"></script>
+</body>
+</html>
