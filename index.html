@@ -15,6 +15,7 @@
   
   <!-- Style -->
   <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/modal.css">
 </head>
 <body>
 
@@ -44,9 +45,15 @@
           <span class="icon">⭐</span>
           <div class="price-info">
             <span class="text">ลูกค้าสมาชิก</span>
-            <span class="price-detail">ส่วนลด 10%</span>
+            <span class="price-detail">รับส่วนลดพิเศษ</span>
           </div>
         </button>
+      </div>
+
+      <div style="text-align: center; margin-top: 15px;">
+        <a href="register-member.html" style="color: #FF9800; text-decoration: none; font-weight: 600;">
+          ⭐ ยังไม่เป็นสมาชิก? สมัครเลย!
+        </a>
       </div>
     </section>
 
@@ -132,6 +139,7 @@
   </footer>
 
   <!-- ===== Scripts ===== -->
+  <script src="js/modal.js"></script>
   <script type="module" src="js/firebase.js"></script>
   <script type="module" src="js/app.js"></script>
   
@@ -139,6 +147,7 @@
     // เลือกประเภทราคา
     let currentPriceType = 'customer'; // default
     let currentBasePrice = 0;
+    let currentMemberDiscount = 0; // เปอร์เซ็นต์
 
     function selectPriceType(type) {
       const buttons = document.querySelectorAll('.price-btn');
@@ -151,7 +160,7 @@
         console.log('Selected: ลูกค้าทั่วไป (ราคาเต็ม)');
       } else if (type === 'member') {
         document.querySelector('.member-btn').classList.add('active');
-        console.log('Selected: ลูกค้าสมาชิก (ส่วนลด 10%)');
+        console.log('Selected: ลูกค้าสมาชิก (รับส่วนลด)');
       }
       
       // อัพเดทราคาถ้ามีการเลือกรอบรถแล้ว
@@ -168,24 +177,27 @@
       }
 
       const basePrice = Number(selectedOption.dataset.price) || 0;
+      const memberDiscount = Number(selectedOption.dataset.memberDiscount) || 0;
+      
       currentBasePrice = basePrice;
+      currentMemberDiscount = memberDiscount;
       
       if (basePrice > 0) {
         document.getElementById('priceDisplay').classList.remove('hidden');
         
         // คำนวณราคา
         const isMember = currentPriceType === 'member';
-        const discount = isMember ? Math.round(basePrice * 0.1) : 0;
-        const finalPrice = basePrice - discount;
+        const discountAmount = isMember ? Math.round(basePrice * (memberDiscount / 100)) : 0;
+        const finalPrice = basePrice - discountAmount;
         
         // แสดงราคา
         document.getElementById('pricePerSeat').textContent = `฿${basePrice.toLocaleString()}`;
         
         // แสดง/ซ่อนส่วนลด
         const discountRow = document.getElementById('discountRow');
-        if (isMember && discount > 0) {
+        if (isMember && discountAmount > 0) {
           discountRow.style.display = 'flex';
-          document.getElementById('discountAmount').textContent = `-฿${discount.toLocaleString()}`;
+          document.getElementById('discountAmount').textContent = `-฿${discountAmount.toLocaleString()} (${memberDiscount}%)`;
         } else {
           discountRow.style.display = 'none';
         }
