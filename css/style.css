@@ -1,29 +1,245 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
 body {
-  font-family: sans-serif;
-  max-width: 400px;
-  margin: auto;
+  font-family: 'Sarabun', 'Noto Sans Thai', sans-serif;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  min-height: 100vh;
   padding: 20px;
 }
 
-h1 {
+/* ===== Header ===== */
+header {
   text-align: center;
+  color: white;
+  margin-bottom: 30px;
 }
 
-input, select, button {
+header h1 {
+  font-size: 2.5em;
+  margin-bottom: 10px;
+  text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+}
+
+header p {
+  font-size: 1.1em;
+  opacity: 0.95;
+}
+
+/* ===== Main Container ===== */
+main {
+  max-width: 500px;
+  margin: 0 auto;
+}
+
+/* ===== Card ===== */
+.card {
+  background: white;
+  border-radius: 15px;
+  padding: 25px;
+  margin-bottom: 20px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+}
+
+.card h2 {
+  color: #667eea;
+  margin-bottom: 20px;
+  font-size: 1.4em;
+  border-bottom: 2px solid #f0f0f0;
+  padding-bottom: 10px;
+}
+
+/* ===== Form Elements ===== */
+label {
+  display: block;
+  margin-bottom: 8px;
+  color: #555;
+  font-weight: 600;
+}
+
+input, select {
   width: 100%;
-  padding: 10px;
-  margin: 6px 0;
+  padding: 12px 15px;
+  margin-bottom: 15px;
+  border: 2px solid #e0e0e0;
+  border-radius: 8px;
+  font-size: 1em;
+  transition: all 0.3s;
+  font-family: inherit;
 }
 
+input:focus, select:focus {
+  outline: none;
+  border-color: #667eea;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+select {
+  cursor: pointer;
+  background-color: white;
+}
+
+/* ===== Button ===== */
 button {
-  background: #2c7be5;
+  width: 100%;
+  padding: 14px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   color: white;
   border: none;
+  border-radius: 8px;
+  font-size: 1.1em;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+  font-family: inherit;
+}
+
+button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+}
+
+button:active {
+  transform: translateY(0);
+}
+
+/* ===== Result ===== */
+.result {
+  background: linear-gradient(135deg, #84fab0 0%, #8fd3f4 100%);
+  border-left: 5px solid #00c853;
+}
+
+.result h3 {
+  color: #00695c;
+  margin-bottom: 15px;
+}
+
+.result p {
+  margin: 8px 0;
+  color: #004d40;
+  line-height: 1.6;
+}
+
+.result hr {
+  border: none;
+  border-top: 1px solid rgba(0,0,0,0.1);
+  margin: 15px 0;
+}
+
+.hidden {
+  display: none;
+}
+
+/* ===== Footer ===== */
+footer {
+  text-align: center;
+  color: white;
+  margin-top: 40px;
+  padding: 20px;
+  opacity: 0.9;
+}
+
+footer p {
+  margin: 5px 0;
+}
+
+/* ===== Admin Page ===== */
+.admin-container {
+  max-width: 600px;
+  margin: 50px auto;
+  background: white;
+  padding: 40px;
+  border-radius: 15px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+}
+
+.admin-container h2 {
+  color: #667eea;
+  margin-bottom: 30px;
+  text-align: center;
+  font-size: 1.8em;
+}
+
+.checkbox-wrapper {
+  display: flex;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.checkbox-wrapper input[type="checkbox"] {
+  width: auto;
+  margin-right: 10px;
+  margin-bottom: 0;
   cursor: pointer;
 }
 
-#result {
-  margin-top: 15px;
-  background: #e6f4ea;
-  padding: 10px;
+.checkbox-wrapper label {
+  margin-bottom: 0;
+  cursor: pointer;
+}
+
+/* ===== Trip List ===== */
+.trip-list {
+  margin-top: 30px;
+  border-top: 2px solid #f0f0f0;
+  padding-top: 20px;
+}
+
+.trip-item {
+  background: #f8f9fa;
+  padding: 15px;
+  border-radius: 8px;
+  margin-bottom: 10px;
+  border-left: 4px solid #667eea;
+}
+
+.trip-item.inactive {
+  opacity: 0.5;
+  border-left-color: #999;
+}
+
+.trip-item p {
+  margin: 5px 0;
+  color: #333;
+}
+
+.trip-item strong {
+  color: #667eea;
+}
+
+/* ===== Responsive ===== */
+@media (max-width: 600px) {
+  body {
+    padding: 10px;
+  }
+  
+  header h1 {
+    font-size: 2em;
+  }
+  
+  .card {
+    padding: 20px;
+  }
+  
+  .admin-container {
+    padding: 25px;
+  }
+}
+
+/* ===== Loading Animation ===== */
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.loading {
+  border: 3px solid #f3f3f3;
+  border-top: 3px solid #667eea;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  animation: spin 1s linear infinite;
+  margin: 20px auto;
 }
