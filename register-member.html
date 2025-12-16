@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>⭐ สมัครสมาชิก | Fei Yi Transporter</title>
+  
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;600;700&display=swap" rel="stylesheet">
+  
+  <!-- Style -->
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/modal.css">
+</head>
+<body>
+
+  <!-- ===== Header ===== -->
+  <header>
+    <h1>⭐ สมัครสมาชิก</h1>
+    <p>รับส่วนลดพิเศษทุกการจองคิว</p>
+  </header>
+
+  <!-- ===== Main ===== -->
+  <main>
+
+    <!-- ฟอร์มสมัครสมาชิก -->
+    <section class="card">
+      <h2>📝 ข้อมูลสมัครสมาชิก</h2>
+
+      <form id="registerForm">
+        <label for="idCard">เลขบัตรประชาชน <span style="color: red;">*</span></label>
+        <input
+          type="text"
+          id="idCard"
+          placeholder="1234567890123 (13 หลัก)"
+          maxlength="13"
+          pattern="[0-9]{13}"
+          required
+        >
+        <small style="color: #7f8c8d;">กรอกเฉพาะตัวเลข 13 หลัก</small>
+
+        <label for="fullName" style="margin-top: 15px;">ชื่อ-นามสกุล <span style="color: red;">*</span></label>
+        <input
+          type="text"
+          id="fullName"
+          placeholder="นายสมชาย ใจดี"
+          required
+        >
+
+        <label for="phone" style="margin-top: 15px;">เบอร์โทรศัพท์ <span style="color: red;">*</span></label>
+        <input
+          type="tel"
+          id="phone"
+          placeholder="0812345678"
+          maxlength="10"
+          pattern="[0]{1}[0-9]{9}"
+          required
+        >
+        <small style="color: #7f8c8d;">กรอกเบอร์โทร 10 หลัก</small>
+
+        <label for="email" style="margin-top: 15px;">อีเมล (ไม่บังคับ)</label>
+        <input
+          type="email"
+          id="email"
+          placeholder="example@email.com"
+        >
+
+        <div style="background: #e8f5e9; padding: 15px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #4caf50;">
+          <h4 style="color: #2e7d32; margin-bottom: 10px;">🎁 สิทธิประโยชน์สมาชิก</h4>
+          <ul style="color: #1b5e20; margin-left: 20px; line-height: 1.8;">
+            <li>ส่วนลดพิเศษตามเส้นทาง (5-15%)</li>
+            <li>สะสมคะแนนทุกการจอง</li>
+            <li>จองคิวล่วงหน้าก่อนใคร</li>
+            <li>ข้อเสนอพิเศษเฉพาะสมาชิก</li>
+          </ul>
+        </div>
+
+        <button type="submit" id="registerBtn">⭐ สมัครสมาชิก</button>
+      </form>
+
+      <div style="text-align: center; margin-top: 20px;">
+        <a href="index.html" style="color: #667eea; text-decoration: none;">
+          ← กลับหน้าจองคิว
+        </a>
+      </div>
+    </section>
+
+    <!-- ตรวจสอบสมาชิก -->
+    <section class="card" style="background: #f8f9fa;">
+      <h2>🔍 ตรวจสอบสมาชิก</h2>
+      
+      <p style="color: #555; margin-bottom: 15px;">
+        มีบัญชีสมาชิกแล้ว? ตรวจสอบสถานะสมาชิกของคุณ
+      </p>
+
+      <div style="display: flex; gap: 10px;">
+        <input
+          type="tel"
+          id="checkPhone"
+          placeholder="เบอร์โทรศัพท์"
+          style="flex: 1;"
+        >
+        <button onclick="checkMembership()" class="btn-secondary" style="background: #3498db; color: white; width: auto; padding: 0 20px;">
+          ตรวจสอบ
+        </button>
+      </div>
+
+      <div id="memberInfo" style="display: none; margin-top: 15px; padding: 15px; background: white; border-radius: 8px;"></div>
+    </section>
+
+  </main>
+
+  <!-- ===== Footer ===== -->
+  <footer>
+    <div class="footer-content">
+      <p class="copyright">© 2025 Fei Yi Transporter</p>
+      
+      <div class="footer-buttons">
+        <a href="dashboard.html" class="footer-btn admin-btn">
+          🔐 Admin
+        </a>
+        <a href="tel:0812345678" class="footer-btn contact-btn">
+          📞 ติดต่อสอบถาม
+        </a>
+        <a href="#" class="footer-btn line-btn">
+          💬 LINE Official
+        </a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ===== Scripts ===== -->
+  <script src="js/modal.js"></script>
+  <script type="module" src="js/register-member.js"></script>
+
+</body>
+</html>
