@@ -27,26 +27,28 @@
   <!-- ===== Main ===== -->
   <main>
 
-    <!-- ===== User Type Buttons ===== -->
-    <div class="user-type-buttons">
-      <a href="dashboard.html" class="user-btn admin-btn-new">
-        <span class="icon">🔐</span>
-        <span class="text">Admin</span>
-        <span class="subtitle">เข้าสู่ระบบหลังบ้าน</span>
-      </a>
+    <!-- ===== ประเภทราคา ===== -->
+    <section class="card price-type-card">
+      <h2>💰 เลือกประเภทราคา</h2>
       
-      <button class="user-btn customer-btn active" onclick="selectUserType('customer')">
-        <span class="icon">👤</span>
-        <span class="text">ลูกค้าทั่วไป</span>
-        <span class="subtitle">จองคิวทันที</span>
-      </button>
-      
-      <button class="user-btn member-btn" onclick="selectUserType('member')">
-        <span class="icon">⭐</span>
-        <span class="text">ลูกค้าสมาชิก</span>
-        <span class="subtitle">ส่วนลดพิเศษ</span>
-      </button>
-    </div>
+      <div class="price-type-buttons">
+        <button class="price-btn customer-btn active" onclick="selectPriceType('customer')">
+          <span class="icon">👤</span>
+          <div class="price-info">
+            <span class="text">ลูกค้าทั่วไป</span>
+            <span class="price-detail">ราคาเต็ม 100%</span>
+          </div>
+        </button>
+        
+        <button class="price-btn member-btn" onclick="selectPriceType('member')">
+          <span class="icon">⭐</span>
+          <div class="price-info">
+            <span class="text">ลูกค้าสมาชิก</span>
+            <span class="price-detail">ส่วนลด 10%</span>
+          </div>
+        </button>
+      </div>
+    </section>
 
     <!-- เลือกรอบรถ -->
     <section class="card">
@@ -56,6 +58,22 @@
       <select id="tripSelect">
         <option value="">-- กรุณาเลือกรอบรถ --</option>
       </select>
+
+      <!-- แสดงราคา -->
+      <div id="priceDisplay" class="price-display hidden">
+        <div class="price-row">
+          <span class="price-label">💰 ราคาต่อที่นั่ง:</span>
+          <span id="pricePerSeat" class="price-value">฿0</span>
+        </div>
+        <div class="price-row" id="discountRow" style="display: none;">
+          <span class="price-label">🎁 ส่วนลดสมาชิก:</span>
+          <span id="discountAmount" class="discount-value">-฿0</span>
+        </div>
+        <div class="price-row total-row">
+          <span class="price-label"><strong>รวม (1 ที่นั่ง):</strong></span>
+          <span id="totalPrice" class="total-value">฿0</span>
+        </div>
+      </div>
     </section>
 
     <!-- ฟอร์มจอง -->
@@ -96,8 +114,21 @@
 
   <!-- ===== Footer ===== -->
   <footer>
-    <p>© 2025 Fei Yi Transporter</p>
-    <p>📞 ติดต่อสอบถาม | 💬 LINE Official</p>
+    <div class="footer-content">
+      <p class="copyright">© 2025 Fei Yi Transporter</p>
+      
+      <div class="footer-buttons">
+        <a href="dashboard.html" class="footer-btn admin-btn">
+          🔐 Admin
+        </a>
+        <a href="tel:0812345678" class="footer-btn contact-btn">
+          📞 ติดต่อสอบถาม
+        </a>
+        <a href="#" class="footer-btn line-btn" onclick="alert('เพิ่ม LINE ID ของคุณที่นี่'); return false;">
+          💬 LINE Official
+        </a>
+      </div>
+    </div>
   </footer>
 
   <!-- ===== Scripts ===== -->
@@ -105,21 +136,75 @@
   <script type="module" src="js/app.js"></script>
   
   <script>
-    // เลือกประเภทผู้ใช้
-    function selectUserType(type) {
-      const buttons = document.querySelectorAll('.user-btn:not(.admin-btn-new)');
+    // เลือกประเภทราคา
+    let currentPriceType = 'customer'; // default
+    let currentBasePrice = 0;
+
+    function selectPriceType(type) {
+      const buttons = document.querySelectorAll('.price-btn');
       buttons.forEach(btn => btn.classList.remove('active'));
+      
+      currentPriceType = type;
       
       if (type === 'customer') {
         document.querySelector('.customer-btn').classList.add('active');
-        // Logic สำหรับลูกค้าทั่วไป (ราคาปกติ)
-        console.log('Selected: ลูกค้าทั่วไป');
+        console.log('Selected: ลูกค้าทั่วไป (ราคาเต็ม)');
       } else if (type === 'member') {
         document.querySelector('.member-btn').classList.add('active');
-        // Logic สำหรับลูกค้าสมาชิก (ราคาลด 10%)
-        console.log('Selected: ลูกค้าสมาชิก');
+        console.log('Selected: ลูกค้าสมาชิก (ส่วนลด 10%)');
+      }
+      
+      // อัพเดทราคาถ้ามีการเลือกรอบรถแล้ว
+      updatePriceDisplay();
+    }
+
+    function updatePriceDisplay() {
+      const tripSelect = document.getElementById('tripSelect');
+      const selectedOption = tripSelect.options[tripSelect.selectedIndex];
+      
+      if (!selectedOption || !selectedOption.value) {
+        document.getElementById('priceDisplay').classList.add('hidden');
+        return;
+      }
+
+      const basePrice = Number(selectedOption.dataset.price) || 0;
+      currentBasePrice = basePrice;
+      
+      if (basePrice > 0) {
+        document.getElementById('priceDisplay').classList.remove('hidden');
+        
+        // คำนวณราคา
+        const isMember = currentPriceType === 'member';
+        const discount = isMember ? Math.round(basePrice * 0.1) : 0;
+        const finalPrice = basePrice - discount;
+        
+        // แสดงราคา
+        document.getElementById('pricePerSeat').textContent = `฿${basePrice.toLocaleString()}`;
+        
+        // แสดง/ซ่อนส่วนลด
+        const discountRow = document.getElementById('discountRow');
+        if (isMember && discount > 0) {
+          discountRow.style.display = 'flex';
+          document.getElementById('discountAmount').textContent = `-฿${discount.toLocaleString()}`;
+        } else {
+          discountRow.style.display = 'none';
+        }
+        
+        document.getElementById('totalPrice').textContent = `฿${finalPrice.toLocaleString()}`;
       }
     }
+
+    // เพิ่ม event listener สำหรับการเลือกรอบรถ
+    document.addEventListener('DOMContentLoaded', function() {
+      const tripSelect = document.getElementById('tripSelect');
+      if (tripSelect) {
+        tripSelect.addEventListener('change', updatePriceDisplay);
+      }
+    });
+    
+    // Export functions for global access
+    window.selectPriceType = selectPriceType;
+    window.updatePriceDisplay = updatePriceDisplay;
   </script>
 
 </body>
