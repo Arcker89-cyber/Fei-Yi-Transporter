@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <title>Admin - เพิ่มรอบรถ</title>
+</head>
+<body>
+
+<h2>🚐 เพิ่มรอบรถ</h2>
+
+<form id="tripForm">
+  <input type="text" id="route" placeholder="เส้นทาง" required><br><br>
+  <input type="time" id="time" required><br><br>
+  <input type="number" id="seats" placeholder="จำนวนที่นั่ง" required><br><br>
+  <input type="number" id="price" placeholder="ราคา" required><br><br>
+
+  <label>
+    <input type="checkbox" id="active" checked>
+    เปิดใช้งาน
+  </label><br><br>
+
+  <button type="submit">บันทึก</button>
+</form>
+
+<script type="module" src="js/admin.js"></script>
+</body>
+</html>
