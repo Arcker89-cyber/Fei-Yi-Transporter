@@ -11,6 +11,33 @@ body {
   padding: 20px;
 }
 
+/* ===== Admin Button ===== */
+.admin-btn {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  background: rgba(255, 255, 255, 0.95);
+  color: #667eea;
+  padding: 12px 20px;
+  border-radius: 25px;
+  text-decoration: none;
+  font-weight: 700;
+  font-size: 0.95em;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  transition: all 0.3s;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.admin-btn:hover {
+  background: white;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+  color: #764ba2;
+}
+
 /* ===== Header ===== */
 header {
   text-align: center;
@@ -148,7 +175,7 @@ footer p {
 
 /* ===== Admin Page ===== */
 .admin-container {
-  max-width: 600px;
+  max-width: 800px;
   margin: 50px auto;
   background: white;
   padding: 40px;
@@ -161,6 +188,85 @@ footer p {
   margin-bottom: 30px;
   text-align: center;
   font-size: 1.8em;
+}
+
+/* ===== Admin Navigation ===== */
+.admin-nav {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 30px;
+  border-bottom: 2px solid #f0f0f0;
+  padding-bottom: 10px;
+}
+
+.nav-link {
+  padding: 10px 20px;
+  background: #f5f5f5;
+  color: #666;
+  text-decoration: none;
+  border-radius: 8px 8px 0 0;
+  transition: all 0.3s;
+  font-weight: 600;
+}
+
+.nav-link:hover {
+  background: #e0e0e0;
+  color: #333;
+}
+
+.nav-link.active {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+}
+
+/* ===== Action Buttons ===== */
+.action-buttons {
+  display: flex;
+  gap: 8px;
+  margin-top: 15px;
+  flex-wrap: wrap;
+}
+
+.action-buttons button {
+  flex: 1;
+  min-width: 100px;
+  padding: 8px 12px;
+  font-size: 0.9em;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s;
+  font-weight: 600;
+}
+
+.btn-edit {
+  background: #4caf50;
+  color: white;
+}
+
+.btn-edit:hover {
+  background: #45a049;
+  transform: translateY(-2px);
+}
+
+.btn-toggle {
+  background: #ff9800;
+  color: white;
+}
+
+.btn-toggle:hover {
+  background: #e68900;
+  transform: translateY(-2px);
+}
+
+.btn-delete {
+  background: #f44336;
+  color: white;
+}
+
+.btn-delete:hover {
+  background: #da190b;
+  transform: translateY(-2px);
 }
 
 .checkbox-wrapper {
@@ -199,6 +305,24 @@ footer p {
 .trip-item.inactive {
   opacity: 0.5;
   border-left-color: #999;
+}
+
+.trip-item.past-trip {
+  opacity: 0.6;
+  background: #fafafa;
+  border-left-color: #999;
+}
+
+.date-group {
+  margin-bottom: 20px;
+}
+
+.date-group h4 {
+  margin: 20px 0 10px 0;
+  padding: 10px;
+  background: #f0f0f0;
+  border-radius: 5px;
+  color: #667eea;
 }
 
 .trip-item p {
@@ -242,4 +366,17 @@ footer p {
   height: 40px;
   animation: spin 1s linear infinite;
   margin: 20px auto;
+}
+
+/* ===== Stats Section ===== */
+.stats-section {
+  margin-bottom: 30px;
+}
+
+/* ===== Filter Section ===== */
+.filter-section {
+  background: #f8f9fa;
+  padding: 20px;
+  border-radius: 10px;
+  margin-bottom: 20px;
 }
