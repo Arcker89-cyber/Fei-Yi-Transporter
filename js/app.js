@@ -15,23 +15,52 @@ async function loadTrips() {
   tripSelect.innerHTML = '<option value="">-- กรุณาเลือกรอบรถ --</option>';
 
   try {
-    const q = query(collection(db, "trips"), where("active", "==", true));
+    // กรองเฉพาะรอบรถที่ active และวันที่เป็นวันนี้หรืออนาคต
+    const today = new Date().toISOString().split('T')[0];
+    const q = query(
+      collection(db, "trips"), 
+      where("active", "==", true),
+      where("date", ">=", today)
+    );
     const querySnapshot = await getDocs(q);
 
     if (querySnapshot.empty) {
-      tripSelect.innerHTML += '<option value="" disabled>ยังไม่มีรอบรถ</option>';
+      tripSelect.innerHTML += '<option value="" disabled>ยังไม่มีรอบรถที่พร้อมให้บริการ</option>';
       return;
     }
 
+    // เรียงข้อมูลตามวันที่และเวลา
+    const trips = [];
     querySnapshot.forEach((doc) => {
-      const trip = doc.data();
+      trips.push({ id: doc.id, ...doc.data() });
+    });
+
+    trips.sort((a, b) => {
+      if (a.date !== b.date) {
+        return a.date.localeCompare(b.date);
+      }
+      return a.time.localeCompare(b.time);
+    });
+
+    // แสดงรายการรอบรถ
+    trips.forEach(trip => {
       const option = document.createElement("option");
-      option.value = doc.id;
-      option.textContent = `${trip.route} | ${trip.time} | ว่าง ${trip.seats} ที่นั่ง | ฿${trip.price}`;
+      option.value = trip.id;
+      
+      // แปลงวันที่เป็นภาษาไทย
+      const tripDate = new Date(trip.date);
+      const formattedDate = tripDate.toLocaleDateString('th-TH', {
+        day: 'numeric',
+        month: 'short'
+      });
+      
+      option.textContent = `${formattedDate} | ${trip.time} | ${trip.routeName} | ${trip.seats} ที่ | ฿${trip.price}`;
       option.dataset.seats = trip.seats;
       option.dataset.price = trip.price;
-      option.dataset.route = trip.route;
+      option.dataset.memberDiscount = trip.memberDiscount || 0;
+      option.dataset.route = trip.routeName;
       option.dataset.time = trip.time;
+      option.dataset.date = trip.date;
       tripSelect.appendChild(option);
     });
 
@@ -81,9 +110,19 @@ document.getElementById("bookBtn").addEventListener("click", async () => {
 
   // ยืนยันการจอง
   const totalPrice = Number(selectedOption.dataset.price) * requestedSeats;
+  
+  const tripDate = new Date(selectedOption.dataset.date);
+  const formattedDate = tripDate.toLocaleDateString('th-TH', {
+    weekday: 'long',
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric'
+  });
+  
   const confirmMsg = `
-📍 เส้นทาง: ${selectedOption.dataset.route}
+📅 วันที่: ${formattedDate}
 🕐 เวลา: ${selectedOption.dataset.time}
+📍 เส้นทาง: ${selectedOption.dataset.route}
 👤 ชื่อ: ${name}
 📞 เบอร์: ${phone}
 💺 จำนวนที่นั่ง: ${requestedSeats}
@@ -100,6 +139,7 @@ document.getElementById("bookBtn").addEventListener("click", async () => {
     // บันทึกการจอง
     const bookingData = {
       tripId: tripSelect.value,
+      date: selectedOption.dataset.date,
       route: selectedOption.dataset.route,
       time: selectedOption.dataset.time,
       customerName: name,
@@ -120,14 +160,23 @@ document.getElementById("bookBtn").addEventListener("click", async () => {
 
     // แสดงผลลัพธ์
     const resultDiv = document.getElementById("result");
+    const bookingDate = new Date(bookingData.date);
+    const displayDate = bookingDate.toLocaleDateString('th-TH', {
+      weekday: 'long',
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric'
+    });
+    
     resultDiv.innerHTML = `
       <h3>✅ จองสำเร็จ!</h3>
       <p><strong>หมายเลขการจอง:</strong> ${bookingData.bookingDate}</p>
-      <p><strong>เส้นทาง:</strong> ${bookingData.route}</p>
-      <p><strong>เวลา:</strong> ${bookingData.time}</p>
-      <p><strong>ชื่อ:</strong> ${bookingData.customerName}</p>
-      <p><strong>ที่นั่ง:</strong> ${bookingData.seats} ที่นั่ง</p>
-      <p><strong>ราคารวม:</strong> ฿${bookingData.totalPrice}</p>
+      <p><strong>📅 วันที่เดินทาง:</strong> ${displayDate}</p>
+      <p><strong>🕐 เวลา:</strong> ${bookingData.time}</p>
+      <p><strong>📍 เส้นทาง:</strong> ${bookingData.route}</p>
+      <p><strong>👤 ชื่อ:</strong> ${bookingData.customerName}</p>
+      <p><strong>💺 ที่นั่ง:</strong> ${bookingData.seats} ที่นั่ง</p>
+      <p><strong>💰 ราคารวม:</strong> ฿${bookingData.totalPrice}</p>
       <hr>
       <p style="color: #d32f2f;">⚠️ กรุณาชำระเงินก่อนขึ้นรถ</p>
     `;
