@@ -92,6 +92,20 @@
           >
         </div>
 
+        <div class="form-group">
+          <label for="memberDiscount">🎁 ส่วนลดสมาชิก (%)</label>
+          <input 
+            type="number" 
+            id="memberDiscount" 
+            placeholder="เช่น 10 สำหรับลด 10%" 
+            min="0"
+            max="100"
+            value="10"
+            required
+          >
+          <small style="color: #7f8c8d;">กรอก 0-100 (0 = ไม่มีส่วนลด, 10 = ลด 10%)</small>
+        </div>
+
         <div class="form-group checkbox-group">
           <input type="checkbox" id="active" checked>
           <label for="active">✅ เปิดใช้งานรอบรถนี้</label>
@@ -144,6 +158,12 @@
         <div class="form-group">
           <label for="editPrice">💰 ราคา (บาท)</label>
           <input type="number" id="editPrice" min="0" required>
+        </div>
+
+        <div class="form-group">
+          <label for="editMemberDiscount">🎁 ส่วนลดสมาชิก (%)</label>
+          <input type="number" id="editMemberDiscount" min="0" max="100" required>
+          <small style="color: #7f8c8d;">กรอก 0-100</small>
         </div>
 
         <div class="form-group checkbox-group">
