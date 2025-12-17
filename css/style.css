@@ -100,6 +100,93 @@ body {
   box-shadow: 0 4px 12px rgba(255, 152, 0, 0.3);
 }
 
+/* ===== ปุ่มสมัครสมาชิก (เด่น) ===== */
+.register-member-btn {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 20px;
+  padding: 18px 20px;
+  background: linear-gradient(135deg, #FF9800 0%, #F57C00 100%);
+  color: white;
+  border-radius: 12px;
+  text-decoration: none;
+  box-shadow: 0 4px 15px rgba(255, 152, 0, 0.4);
+  transition: all 0.3s ease;
+  border: none;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+}
+
+.register-member-btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+  transition: left 0.5s;
+}
+
+.register-member-btn:hover::before {
+  left: 100%;
+}
+
+.register-member-btn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 20px rgba(255, 152, 0, 0.5);
+}
+
+.register-member-btn:active {
+  transform: translateY(-1px);
+}
+
+.register-member-btn .btn-icon {
+  font-size: 2.5em;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+}
+
+.register-member-btn .btn-text {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  flex: 1;
+  text-align: left;
+  margin: 0 15px;
+}
+
+.register-member-btn .btn-text strong {
+  font-size: 1.2em;
+  font-weight: 700;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+.register-member-btn .btn-text span {
+  font-size: 0.9em;
+  opacity: 0.95;
+}
+
+.register-member-btn .btn-arrow {
+  font-size: 1.8em;
+  font-weight: bold;
+  transition: transform 0.3s;
+}
+
+.register-member-btn:hover .btn-arrow {
+  transform: translateX(5px);
+}
+
 /* ===== Price Display ===== */
 .price-display {
   margin-top: 20px;
@@ -521,6 +608,27 @@ footer {
   
   .price-info .price-detail {
     font-size: 0.8em;
+  }
+  
+  /* Register Member Button - Mobile */
+  .register-member-btn {
+    padding: 15px;
+  }
+  
+  .register-member-btn .btn-icon {
+    font-size: 2em;
+  }
+  
+  .register-member-btn .btn-text strong {
+    font-size: 1em;
+  }
+  
+  .register-member-btn .btn-text span {
+    font-size: 0.85em;
+  }
+  
+  .register-member-btn .btn-arrow {
+    font-size: 1.5em;
   }
   
   /* Price Display - Mobile */
