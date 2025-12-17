@@ -157,6 +157,7 @@
     let currentBasePrice = 0;
     let currentMemberDiscount = 0; // เปอร์เซ็นต์
     let checkMemberTimeout = null; // สำหรับ debounce
+    let nameAutoFilled = false; // ✅ Track ว่าชื่อมาจาก auto-fill หรือไม่
 
     function selectPriceType(type) {
       const buttons = document.querySelectorAll('.price-btn');
@@ -222,11 +223,13 @@
       const statusDiv = document.getElementById('memberCheckStatus');
       const iconSpan = document.getElementById('memberCheckIcon');
       const textSpan = document.getElementById('memberCheckText');
+      const nameInput = document.getElementById('name');
       
       // ซ่อนสถานะถ้าเบอร์ไม่ครบ 10 หลัก
       if (phone.length !== 10 || !/^0[0-9]{9}$/.test(phone)) {
         statusDiv.style.display = 'none';
         currentMemberData = null;
+        // ✅ ไม่ reset nameAutoFilled ตรงนี้ เพราะอาจกำลังพิมพ์เบอร์อยู่
         return;
       }
 
@@ -264,11 +267,10 @@
             selectPriceType('member');
           }
 
-          // Auto-fill ชื่อถ้ายังไม่ได้กรอก
-          const nameInput = document.getElementById('name');
-          if (!nameInput.value.trim()) {
-            nameInput.value = memberData.fullName;
-          }
+          // ✅ แก้ไข: Update ชื่อเสมอ (ไม่ว่าจะมีค่าหรือไม่)
+          nameInput.value = memberData.fullName;
+          nameAutoFilled = true; // Mark ว่าชื่อมาจาก auto-fill
+          
         } else {
           // ไม่พบสมาชิก
           currentMemberData = null;
@@ -284,6 +286,12 @@
           // เปลี่ยนเป็นลูกค้าทั่วไปอัตโนมัติ
           if (window.currentPriceType !== 'customer') {
             selectPriceType('customer');
+          }
+
+          // ✅ แก้ไข: Clear ชื่อเฉพาะเมื่อชื่อมาจาก auto-fill
+          if (nameAutoFilled) {
+            nameInput.value = '';
+            nameAutoFilled = false;
           }
         }
 
@@ -320,6 +328,7 @@
           const phoneInput = document.getElementById('phone');
           if (!phoneInput.value.trim()) {
             phoneInput.value = memberData.phone;
+            nameAutoFilled = true; // ✅ Mark ว่าชื่อนี้เป็นของสมาชิก
             // เรียก checkMemberStatus เพื่อแสดงสถานะ
             await checkMemberStatus(memberData.phone);
           }
@@ -368,6 +377,12 @@
       // Event listener สำหรับชื่อ
       if (nameInput) {
         let checkNameTimeout = null;
+        
+        // ✅ Track การแก้ไขชื่อโดยผู้ใช้
+        nameInput.addEventListener('input', function() {
+          // ถ้าผู้ใช้พิมพ์ชื่อเอง → ไม่ใช่ auto-fill แล้ว
+          nameAutoFilled = false;
+        });
         
         nameInput.addEventListener('blur', function() {
           const name = this.value.trim();
