@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>🔧 ทดสอบระบบ Admin</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      background: white;
+      border-radius: 20px;
+      padding: 30px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    }
+
+    h1 {
+      color: #667eea;
+      margin-bottom: 10px;
+    }
+
+    .section {
+      margin: 30px 0;
+      padding: 20px;
+      border: 2px solid #e0e0e0;
+      border-radius: 10px;
+    }
+
+    .section h2 {
+      color: #333;
+      margin-bottom: 15px;
+    }
+
+    .status {
+      padding: 10px 15px;
+      border-radius: 8px;
+      margin: 10px 0;
+      font-weight: 600;
+    }
+
+    .status.success {
+      background: #e8f5e9;
+      color: #2e7d32;
+      border-left: 4px solid #4caf50;
+    }
+
+    .status.error {
+      background: #ffebee;
+      color: #c62828;
+      border-left: 4px solid #f44336;
+    }
+
+    .status.warning {
+      background: #fff3e0;
+      color: #e65100;
+      border-left: 4px solid #ff9800;
+    }
+
+    .status.info {
+      background: #e3f2fd;
+      color: #1565c0;
+      border-left: 4px solid #2196f3;
+    }
+
+    button {
+      padding: 12px 24px;
+      background: #667eea;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 1em;
+      font-weight: 600;
+      margin: 5px;
+      transition: all 0.3s;
+    }
+
+    button:hover {
+      background: #764ba2;
+      transform: translateY(-2px);
+    }
+
+    button:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .code {
+      background: #f5f5f5;
+      padding: 15px;
+      border-radius: 8px;
+      font-family: 'Courier New', monospace;
+      margin: 10px 0;
+      overflow-x: auto;
+    }
+
+    .links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 20px;
+    }
+
+    .links a {
+      padding: 10px 20px;
+      background: #4caf50;
+      color: white;
+      text-decoration: none;
+      border-radius: 8px;
+      font-weight: 600;
+      transition: all 0.3s;
+    }
+
+    .links a:hover {
+      background: #45a049;
+      transform: translateY(-2px);
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <h1>🔧 ทดสอบระบบ Admin</h1>
+    <p>ตรวจสอบว่าระบบทำงานถูกต้องหรือไม่</p>
+
+    <!-- Section 1: Firebase Connection -->
+    <div class="section">
+      <h2>1️⃣ การเชื่อมต่อ Firebase</h2>
+      <div id="firebaseStatus" class="status info">⏳ กำลังตรวจสอบ...</div>
+      <button onclick="testFirebase()">ทดสอบอีกครั้ง</button>
+    </div>
+
+    <!-- Section 2: Authentication Status -->
+    <div class="section">
+      <h2>2️⃣ สถานะ Authentication</h2>
+      <div id="authStatus" class="status info">⏳ กำลังตรวจสอบ...</div>
+      <div id="userInfo"></div>
+    </div>
+
+    <!-- Section 3: Test Login -->
+    <div class="section">
+      <h2>3️⃣ ทดสอบ Login</h2>
+      <div style="margin: 15px 0;">
+        <input 
+          type="email" 
+          id="testEmail" 
+          placeholder="อีเมล (เช่น admin@feiyi.com)"
+          style="width: 100%; padding: 12px; border: 2px solid #e0e0e0; border-radius: 8px; margin-bottom: 10px;"
+        >
+        <input 
+          type="password" 
+          id="testPassword" 
+          placeholder="รหัสผ่าน"
+          style="width: 100%; padding: 12px; border: 2px solid #e0e0e0; border-radius: 8px; margin-bottom: 10px;"
+        >
+        <button onclick="testLogin()">🔐 ทดสอบ Login</button>
+        <button onclick="testLogout()">🚪 ทดสอบ Logout</button>
+      </div>
+      <div id="loginStatus"></div>
+    </div>
+
+    <!-- Section 4: Files Check -->
+    <div class="section">
+      <h2>4️⃣ ตรวจสอบไฟล์</h2>
+      <div id="filesStatus" class="status info">⏳ กำลังตรวจสอบ...</div>
+      <button onclick="checkFiles()">ตรวจสอบไฟล์</button>
+    </div>
+
+    <!-- Section 5: Quick Links -->
+    <div class="section">
+      <h2>5️⃣ ลิงก์ด่วน</h2>
+      <div class="links">
+        <a href="admin-login.html" target="_blank">🔐 Login Page</a>
+        <a href="dashboard.html" target="_blank">📊 Dashboard</a>
+        <a href="members.html" target="_blank">⭐ Members</a>
+        <a href="index.html" target="_blank">🏠 Home</a>
+      </div>
+    </div>
+
+    <!-- Section 6: Setup Instructions -->
+    <div class="section">
+      <h2>6️⃣ ขั้นตอนติดตั้ง</h2>
+      <ol style="line-height: 2;">
+        <li>✅ เปิด Firebase Authentication (Email/Password)</li>
+        <li>✅ สร้าง Admin User ใน Firebase Console</li>
+        <li>✅ อัพโหลดไฟล์ทั้งหมด (11 ไฟล์)</li>
+        <li>✅ Refresh หน้าเว็บ (Ctrl+Shift+R)</li>
+        <li>✅ ทดสอบ Login ในหน้านี้</li>
+      </ol>
+    </div>
+  </div>
+
+  <script type="module">
+    import { auth, db } from './js/firebase.js';
+    import { 
+      signInWithEmailAndPassword, 
+      signOut, 
+      onAuthStateChanged 
+    } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
+
+    // Make functions global
+    window.auth = auth;
+    window.db = db;
+    window.signInWithEmailAndPassword = signInWithEmailAndPassword;
+    window.signOut = signOut;
+    window.onAuthStateChanged = onAuthStateChanged;
+
+    // Test Firebase Connection
+    window.testFirebase = () => {
+      const statusDiv = document.getElementById('firebaseStatus');
+      
+      try {
+        if (auth && db) {
+          statusDiv.className = 'status success';
+          statusDiv.innerHTML = `
+            ✅ <strong>Firebase เชื่อมต่อสำเร็จ!</strong><br>
+            <small>Project: ${auth.app.options.projectId}</small>
+          `;
+        } else {
+          statusDiv.className = 'status error';
+          statusDiv.innerHTML = '❌ <strong>ไม่สามารถเชื่อมต่อ Firebase</strong><br>กรุณาตรวจสอบ firebase.js';
+        }
+      } catch (error) {
+        statusDiv.className = 'status error';
+        statusDiv.innerHTML = `❌ <strong>Error:</strong> ${error.message}`;
+      }
+    };
+
+    // Check Auth Status
+    onAuthStateChanged(auth, (user) => {
+      const statusDiv = document.getElementById('authStatus');
+      const userInfoDiv = document.getElementById('userInfo');
+      
+      if (user) {
+        statusDiv.className = 'status success';
+        statusDiv.innerHTML = '✅ <strong>คุณ Login อยู่!</strong>';
+        
+        userInfoDiv.innerHTML = `
+          <div class="code">
+            📧 อีเมล: ${user.email}<br>
+            🆔 UID: ${user.uid}<br>
+            ⏰ Login: ${new Date().toLocaleString('th-TH')}
+          </div>
+        `;
+      } else {
+        statusDiv.className = 'status warning';
+        statusDiv.innerHTML = '⚠️ <strong>คุณยัง Login!</strong>';
+        userInfoDiv.innerHTML = '';
+      }
+    });
+
+    // Test Login
+    window.testLogin = async () => {
+      const email = document.getElementById('testEmail').value.trim();
+      const password = document.getElementById('testPassword').value;
+      const statusDiv = document.getElementById('loginStatus');
+
+      if (!email || !password) {
+        statusDiv.className = 'status error';
+        statusDiv.innerHTML = '❌ กรุณากรอกอีเมลและรหัสผ่าน';
+        return;
+      }
+
+      try {
+        statusDiv.className = 'status info';
+        statusDiv.innerHTML = '⏳ กำลัง Login...';
+
+        const userCredential = await signInWithEmailAndPassword(auth, email, password);
+        
+        statusDiv.className = 'status success';
+        statusDiv.innerHTML = `
+          ✅ <strong>Login สำเร็จ!</strong><br>
+          <small>อีเมล: ${userCredential.user.email}</small>
+        `;
+
+      } catch (error) {
+        statusDiv.className = 'status error';
+        
+        let errorMsg = 'เกิดข้อผิดพลาด';
+        
+        if (error.code === 'auth/invalid-credential') {
+          errorMsg = 'อีเมลหรือรหัสผ่านไม่ถูกต้อง';
+        } else if (error.code === 'auth/user-not-found') {
+          errorMsg = 'ไม่พบผู้ใช้นี้ในระบบ<br><small>กรุณาสร้าง Admin User ใน Firebase Console</small>';
+        } else if (error.code === 'auth/configuration-not-found') {
+          errorMsg = 'Firebase Authentication ยังไม่ได้เปิดใช้งาน<br><small>กรุณาเปิด Email/Password ใน Firebase Console</small>';
+        }
+        
+        statusDiv.innerHTML = `
+          ❌ <strong>${errorMsg}</strong><br>
+          <small>Error code: ${error.code}</small>
+        `;
+      }
+    };
+
+    // Test Logout
+    window.testLogout = async () => {
+      const statusDiv = document.getElementById('loginStatus');
+      
+      try {
+        await signOut(auth);
+        statusDiv.className = 'status success';
+        statusDiv.innerHTML = '✅ <strong>Logout สำเร็จ!</strong>';
+      } catch (error) {
+        statusDiv.className = 'status error';
+        statusDiv.innerHTML = `❌ <strong>Error:</strong> ${error.message}`;
+      }
+    };
+
+    // Check Files
+    window.checkFiles = async () => {
+      const statusDiv = document.getElementById('filesStatus');
+      statusDiv.className = 'status info';
+      statusDiv.innerHTML = '⏳ กำลังตรวจสอบไฟล์...';
+
+      const files = [
+        'admin-login.html',
+        'members.html',
+        'js/auth.js',
+        'js/members.js'
+      ];
+
+      let results = '<div class="code">';
+      let allSuccess = true;
+
+      for (const file of files) {
+        try {
+          const response = await fetch(file, { method: 'HEAD' });
+          if (response.ok) {
+            results += `✅ ${file}<br>`;
+          } else {
+            results += `❌ ${file} (Not Found)<br>`;
+            allSuccess = false;
+          }
+        } catch (error) {
+          results += `❌ ${file} (Error)<br>`;
+          allSuccess = false;
+        }
+      }
+
+      results += '</div>';
+
+      if (allSuccess) {
+        statusDiv.className = 'status success';
+        statusDiv.innerHTML = '<strong>✅ ไฟล์ครบถ้วน!</strong>' + results;
+      } else {
+        statusDiv.className = 'status error';
+        statusDiv.innerHTML = '<strong>❌ ไฟล์ไม่ครบ!</strong>' + results;
+      }
+    };
+
+    // Auto-run tests
+    testFirebase();
+    checkFiles();
+  </script>
+
+</body>
+</html>

@@ -7,6 +7,20 @@ import {
   orderBy,
   limit
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { requireAuth, logout } from "./auth.js";
+
+// ===== ตรวจสอบ Authentication =====
+requireAuth().catch(() => {
+  // จะ redirect ไป login อัตโนมัติใน auth.js
+});
+
+// ===== Logout Button =====
+document.getElementById('logoutBtn')?.addEventListener('click', async (e) => {
+  e.preventDefault();
+  if (confirm('คุณต้องการออกจากระบบหรือไม่?')) {
+    await logout();
+  }
+});
 
 // ===== โหลดสถิติ Dashboard =====
 async function loadDashboardStats() {
