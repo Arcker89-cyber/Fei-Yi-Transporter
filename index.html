@@ -114,9 +114,6 @@
       <button id="bookBtn">✅ จองคิวเลย</button>
     </section>
 
-    <!-- ผลลัพธ์ -->
-    <section id="result" class="card result hidden"></section>
-
   </main>
 
   <!-- ===== Footer ===== -->
@@ -145,7 +142,7 @@
   
   <script>
     // เลือกประเภทราคา
-    let currentPriceType = 'customer'; // default
+    window.currentPriceType = 'customer'; // default - ทำให้เป็น global
     let currentBasePrice = 0;
     let currentMemberDiscount = 0; // เปอร์เซ็นต์
 
@@ -153,7 +150,7 @@
       const buttons = document.querySelectorAll('.price-btn');
       buttons.forEach(btn => btn.classList.remove('active'));
       
-      currentPriceType = type;
+      window.currentPriceType = type; // เก็บใน window object
       
       if (type === 'customer') {
         document.querySelector('.customer-btn').classList.add('active');
@@ -186,7 +183,7 @@
         document.getElementById('priceDisplay').classList.remove('hidden');
         
         // คำนวณราคา
-        const isMember = currentPriceType === 'member';
+        const isMember = window.currentPriceType === 'member';
         const discountAmount = isMember ? Math.round(basePrice * (memberDiscount / 100)) : 0;
         const finalPrice = basePrice - discountAmount;
         
