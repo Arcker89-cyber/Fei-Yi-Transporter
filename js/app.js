@@ -81,22 +81,22 @@ document.getElementById("bookBtn").addEventListener("click", async () => {
 
   // Validation
   if (!tripSelect.value) {
-    alert("⚠️ กรุณาเลือกรอบรถ");
+    showError("กรุณาเลือกรอบรถ", "แจ้งเตือน");
     return;
   }
 
   if (!name) {
-    alert("⚠️ กรุณากรอกชื่อผู้จอง");
+    showError("กรุณากรอกชื่อผู้จอง", "แจ้งเตือน");
     return;
   }
 
-  if (!phone || phone.length < 9) {
-    alert("⚠️ กรุณากรอกเบอร์โทรศัพท์ให้ถูกต้อง");
+  if (!phone || phone.length !== 10 || !/^0[0-9]{9}$/.test(phone)) {
+    showError("กรุณากรอกเบอร์โทรศัพท์ 10 หลักให้ถูกต้อง", "แจ้งเตือน");
     return;
   }
 
   if (!requestedSeats || requestedSeats < 1) {
-    alert("⚠️ กรุณากรอกจำนวนที่นั่ง");
+    showError("กรุณากรอกจำนวนที่นั่ง", "แจ้งเตือน");
     return;
   }
 
@@ -104,99 +104,219 @@ document.getElementById("bookBtn").addEventListener("click", async () => {
   const availableSeats = Number(selectedOption.dataset.seats);
 
   if (requestedSeats > availableSeats) {
-    alert(`⚠️ ที่นั่งไม่พอ (เหลือ ${availableSeats} ที่นั่ง)`);
-    return;
-  }
-
-  // ยืนยันการจอง
-  const totalPrice = Number(selectedOption.dataset.price) * requestedSeats;
-  
-  const tripDate = new Date(selectedOption.dataset.date);
-  const formattedDate = tripDate.toLocaleDateString('th-TH', {
-    weekday: 'long',
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric'
-  });
-  
-  const confirmMsg = `
-📅 วันที่: ${formattedDate}
-🕐 เวลา: ${selectedOption.dataset.time}
-📍 เส้นทาง: ${selectedOption.dataset.route}
-👤 ชื่อ: ${name}
-📞 เบอร์: ${phone}
-💺 จำนวนที่นั่ง: ${requestedSeats}
-💰 ราคารวม: ฿${totalPrice}
-
-ยืนยันการจอง?
-  `.trim();
-
-  if (!confirm(confirmMsg)) {
+    showError(`ที่นั่งไม่พอ<br>ที่นั่งว่าง: ${availableSeats} ที่นั่ง<br>คุณต้องการจอง: ${requestedSeats} ที่นั่ง`, "ที่นั่งไม่พอ");
     return;
   }
 
   try {
-    // บันทึกการจอง
-    const bookingData = {
-      tripId: tripSelect.value,
-      date: selectedOption.dataset.date,
-      route: selectedOption.dataset.route,
-      time: selectedOption.dataset.time,
-      customerName: name,
-      customerPhone: phone,
-      seats: requestedSeats,
-      totalPrice: totalPrice,
-      bookingDate: new Date().toISOString(),
-      status: "confirmed"
-    };
+    // ตรวจสอบประเภทลูกค้า (customer หรือ member)
+    const isMemberBooking = window.currentPriceType === 'member';
+    let memberData = null;
 
-    await addDoc(collection(db, "bookings"), bookingData);
+    // ถ้าเลือกจองแบบสมาชิก ต้องตรวจสอบว่าเป็นสมาชิกจริง
+    if (isMemberBooking) {
+      showLoading("กำลังตรวจสอบสมาชิก...");
+      
+      const memberQuery = query(
+        collection(db, "members"), 
+        where("phone", "==", phone)
+      );
+      const memberSnapshot = await getDocs(memberQuery);
+      
+      closeModal();
 
-    // อัพเดทที่นั่งที่เหลือ
-    const tripRef = doc(db, "trips", tripSelect.value);
-    await updateDoc(tripRef, {
-      seats: availableSeats - requestedSeats
-    });
+      if (memberSnapshot.empty) {
+        // ไม่พบสมาชิก
+        showConfirm(
+          `ไม่พบข้อมูลสมาชิกของเบอร์ ${phone}<br><br>
+          คุณต้องการ:<br>
+          • <strong>สมัครสมาชิก</strong> เพื่อรับส่วนลด<br>
+          • หรือ <strong>จองแบบทั่วไป</strong> (ราคาเต็ม)`,
+          "⚠️ ไม่พบข้อมูลสมาชิก",
+          () => {
+            // ไปหน้าสมัครสมาชิก
+            window.location.href = "register-member.html";
+          },
+          () => {
+            // เปลี่ยนเป็นลูกค้าทั่วไป
+            document.querySelector('.customer-btn').classList.add('active');
+            document.querySelector('.member-btn').classList.remove('active');
+            window.currentPriceType = 'customer';
+            updatePriceDisplay();
+            showAlert("เปลี่ยนเป็นลูกค้าทั่วไป (ราคาเต็ม) แล้ว<br>กรุณากดจองคิวอีกครั้ง", "แจ้งเตือน", "info");
+          }
+        );
+        return;
+      }
 
-    // แสดงผลลัพธ์
-    const resultDiv = document.getElementById("result");
-    const bookingDate = new Date(bookingData.date);
-    const displayDate = bookingDate.toLocaleDateString('th-TH', {
+      // พบสมาชิก
+      memberData = memberSnapshot.docs[0].data();
+      memberData.id = memberSnapshot.docs[0].id;
+    }
+
+    // คำนวณราคา
+    const basePrice = Number(selectedOption.dataset.price);
+    const memberDiscount = Number(selectedOption.dataset.memberDiscount) || 0;
+    const discountAmount = isMemberBooking ? Math.round(basePrice * (memberDiscount / 100)) : 0;
+    const pricePerSeat = basePrice - discountAmount;
+    const totalPrice = pricePerSeat * requestedSeats;
+    const totalDiscount = discountAmount * requestedSeats;
+
+    // ข้อมูลการจอง
+    const tripDate = new Date(selectedOption.dataset.date);
+    const formattedDate = tripDate.toLocaleDateString('th-TH', {
       weekday: 'long',
       year: 'numeric',
       month: 'long',
       day: 'numeric'
     });
-    
-    resultDiv.innerHTML = `
-      <h3>✅ จองสำเร็จ!</h3>
-      <p><strong>หมายเลขการจอง:</strong> ${bookingData.bookingDate}</p>
-      <p><strong>📅 วันที่เดินทาง:</strong> ${displayDate}</p>
-      <p><strong>🕐 เวลา:</strong> ${bookingData.time}</p>
-      <p><strong>📍 เส้นทาง:</strong> ${bookingData.route}</p>
-      <p><strong>👤 ชื่อ:</strong> ${bookingData.customerName}</p>
-      <p><strong>💺 ที่นั่ง:</strong> ${bookingData.seats} ที่นั่ง</p>
-      <p><strong>💰 ราคารวม:</strong> ฿${bookingData.totalPrice}</p>
-      <hr>
-      <p style="color: #d32f2f;">⚠️ กรุณาชำระเงินก่อนขึ้นรถ</p>
+
+    // สร้างข้อความยืนยัน
+    let confirmMsg = `
+      <div style="text-align: left;">
+        <p><strong>📅 วันที่:</strong> ${formattedDate}</p>
+        <p><strong>🕐 เวลา:</strong> ${selectedOption.dataset.time}</p>
+        <p><strong>📍 เส้นทาง:</strong> ${selectedOption.dataset.route}</p>
+        <p><strong>👤 ชื่อ:</strong> ${name}</p>
+        <p><strong>📞 เบอร์:</strong> ${phone}</p>
+        <p><strong>💺 จำนวนที่นั่ง:</strong> ${requestedSeats} ที่นั่ง</p>
+        <hr style="margin: 15px 0;">
+        <p><strong>💰 ราคาต่อที่นั่ง:</strong> ฿${basePrice.toLocaleString()}</p>
     `;
-    resultDiv.classList.remove("hidden");
 
-    // Clear form
-    document.getElementById("name").value = "";
-    document.getElementById("phone").value = "";
-    seatsInput.value = "";
-    tripSelect.value = "";
+    if (isMemberBooking && totalDiscount > 0) {
+      confirmMsg += `
+        <p style="color: #27ae60;"><strong>🎁 ส่วนลดสมาชิก:</strong> -฿${totalDiscount.toLocaleString()} (${memberDiscount}%)</p>
+      `;
+    }
 
-    // Reload trips
-    await loadTrips();
+    confirmMsg += `
+        <p style="font-size: 1.2em; color: #667eea;"><strong>รวมทั้งสิ้น:</strong> ฿${totalPrice.toLocaleString()}</p>
+      </div>
+    `;
 
-    // Scroll to result
-    resultDiv.scrollIntoView({ behavior: "smooth" });
+    // ยืนยันการจอง
+    showConfirm(
+      confirmMsg,
+      "🎫 ยืนยันการจอง",
+      async () => {
+        try {
+          showLoading("กำลังบันทึกการจอง...");
+
+          // บันทึกการจอง
+          const bookingData = {
+            tripId: tripSelect.value,
+            date: selectedOption.dataset.date,
+            route: selectedOption.dataset.route,
+            time: selectedOption.dataset.time,
+            customerName: name,
+            customerPhone: phone,
+            seats: requestedSeats,
+            basePrice: basePrice,
+            pricePerSeat: pricePerSeat,
+            totalPrice: totalPrice,
+            bookingType: isMemberBooking ? "member" : "customer",
+            discount: totalDiscount,
+            discountPercent: isMemberBooking ? memberDiscount : 0,
+            bookingDate: new Date().toISOString(),
+            status: "confirmed"
+          };
+
+          // ถ้าเป็นสมาชิก เพิ่มข้อมูลสมาชิก
+          if (isMemberBooking && memberData) {
+            bookingData.memberId = memberData.id;
+            bookingData.memberName = memberData.fullName;
+            bookingData.memberIdCard = memberData.idCard;
+          }
+
+          await addDoc(collection(db, "bookings"), bookingData);
+
+          // อัพเดทที่นั่งที่เหลือ
+          const tripRef = doc(db, "trips", tripSelect.value);
+          await updateDoc(tripRef, {
+            seats: availableSeats - requestedSeats
+          });
+
+          // ถ้าเป็นสมาชิก อัพเดทจำนวนการจอง
+          if (isMemberBooking && memberData) {
+            const memberRef = doc(db, "members", memberData.id);
+            await updateDoc(memberRef, {
+              totalBookings: (memberData.totalBookings || 0) + 1,
+              points: (memberData.points || 0) + Math.floor(totalPrice / 100) // 1 คะแนนต่อ 100 บาท
+            });
+          }
+
+          closeModal();
+
+          // แสดงผลลัพธ์
+          const displayDate = tripDate.toLocaleDateString('th-TH', {
+            weekday: 'long',
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric'
+          });
+
+          let successMsg = `
+            <div style="text-align: center; padding: 20px;">
+              <div style="font-size: 4em; margin-bottom: 15px;">✅</div>
+              <h2 style="color: #27ae60; margin-bottom: 20px;">จองสำเร็จ!</h2>
+              
+              <div style="background: #f8f9fa; padding: 20px; border-radius: 10px; text-align: left; margin-bottom: 20px;">
+                <p><strong>📅 วันที่เดินทาง:</strong> ${displayDate}</p>
+                <p><strong>🕐 เวลา:</strong> ${bookingData.time}</p>
+                <p><strong>📍 เส้นทาง:</strong> ${bookingData.route}</p>
+                <p><strong>👤 ชื่อ:</strong> ${bookingData.customerName}</p>
+                <p><strong>📞 เบอร์:</strong> ${bookingData.customerPhone}</p>
+                <p><strong>💺 ที่นั่ง:</strong> ${bookingData.seats} ที่นั่ง</p>
+          `;
+
+          if (isMemberBooking && totalDiscount > 0) {
+            successMsg += `
+                <p style="color: #27ae60;"><strong>🎁 ส่วนลดสมาชิก:</strong> -฿${totalDiscount.toLocaleString()}</p>
+            `;
+          }
+
+          successMsg += `
+                <p style="font-size: 1.3em; color: #667eea; margin-top: 10px;"><strong>💰 ราคารวม:</strong> ฿${bookingData.totalPrice.toLocaleString()}</p>
+              </div>
+              
+              <div style="background: #fff3cd; padding: 15px; border-radius: 8px; border-left: 4px solid #f39c12;">
+                <p style="color: #856404; margin: 0;">
+                  ⚠️ <strong>กรุณาชำระเงินก่อนขึ้นรถ</strong><br>
+                  และแจ้งเบอร์โทร ${bookingData.customerPhone} กับพนักงาน
+                </p>
+              </div>
+            </div>
+          `;
+
+          showAlert(successMsg, "🎉 จองคิวสำเร็จ", "success");
+
+          // Clear form
+          document.getElementById("name").value = "";
+          document.getElementById("phone").value = "";
+          seatsInput.value = "";
+          tripSelect.value = "";
+          document.getElementById("priceDisplay").classList.add("hidden");
+
+          // Reload trips
+          await loadTrips();
+
+        } catch (error) {
+          closeModal();
+          console.error("❌ Booking error:", error);
+          showError("เกิดข้อผิดพลาดในการจองคิว<br>กรุณาลองใหม่อีกครั้ง", "ผิดพลาด");
+        }
+      },
+      () => {
+        // กดยกเลิก
+        console.log("Booking cancelled");
+      }
+    );
 
   } catch (error) {
-    console.error("❌ Booking error:", error);
-    alert("เกิดข้อผิดพลาด กรุณาลองใหม่อีกครั้ง");
+    closeModal();
+    console.error("❌ Error:", error);
+    showError("เกิดข้อผิดพลาด กรุณาลองใหม่อีกครั้ง", "ผิดพลาด");
   }
 });
 
