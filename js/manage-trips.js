@@ -11,12 +11,17 @@ import {
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 // ===== เพิ่มรอบรถใหม่ =====
+// ตั้งค่าวันที่เป็นวันนี้
+const today = new Date().toISOString().split('T')[0];
+document.getElementById("date").value = today;
+
 document.getElementById("tripForm").addEventListener("submit", async (e) => {
   e.preventDefault();
 
   const data = {
     route: document.getElementById("route").value,
     time: document.getElementById("time").value,
+    date: document.getElementById("date").value,
     seats: Number(document.getElementById("seats").value),
     price: Number(document.getElementById("price").value),
     memberDiscount: Number(document.getElementById("memberDiscount").value),
@@ -48,6 +53,10 @@ document.getElementById("tripForm").addEventListener("submit", async (e) => {
     document.getElementById("tripForm").reset();
     document.getElementById("active").checked = true;
     document.getElementById("memberDiscount").value = 10;
+    
+    // ตั้งค่าวันที่เป็นวันนี้
+    const today = new Date().toISOString().split('T')[0];
+    document.getElementById("date").value = today;
     
     // Reload list
     await loadTrips();
@@ -102,11 +111,25 @@ async function loadTrips() {
       else if (isLowSeats) seatsClass = 'low';
 
       const memberDiscount = trip.memberDiscount || 0;
+      
+      // แสดงวันที่ถ้ามี
+      let dateDisplay = '';
+      if (trip.date) {
+        const tripDate = new Date(trip.date);
+        const formattedDate = tripDate.toLocaleDateString('th-TH', {
+          weekday: 'short',
+          year: 'numeric',
+          month: 'short',
+          day: 'numeric'
+        });
+        dateDisplay = `<p><strong>📅 วันที่:</strong> ${formattedDate}</p>`;
+      }
 
       html += `
         <div class="trip-card ${cardClass}">
           <div class="trip-info">
             <h3>🚐 ${trip.route}</h3>
+            ${dateDisplay}
             <p><strong>🕐 เวลา:</strong> ${trip.time}</p>
             <p><strong>💰 ราคา:</strong> ฿${trip.price}</p>
             <p><strong>🎁 ส่วนลดสมาชิก:</strong> ${memberDiscount}%</p>
@@ -161,6 +184,7 @@ window.openEditModal = async (tripId) => {
     document.getElementById("editTripId").value = tripId;
     document.getElementById("editRoute").value = tripData.route;
     document.getElementById("editTime").value = tripData.time;
+    document.getElementById("editDate").value = tripData.date || new Date().toISOString().split('T')[0];
     document.getElementById("editSeats").value = tripData.seats;
     document.getElementById("editPrice").value = tripData.price;
     document.getElementById("editMemberDiscount").value = tripData.memberDiscount || 0;
@@ -188,6 +212,7 @@ document.getElementById("editForm").addEventListener("submit", async (e) => {
   const data = {
     route: document.getElementById("editRoute").value,
     time: document.getElementById("editTime").value,
+    date: document.getElementById("editDate").value,
     seats: Number(document.getElementById("editSeats").value),
     price: Number(document.getElementById("editPrice").value),
     memberDiscount: Number(document.getElementById("editMemberDiscount").value),
