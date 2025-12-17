@@ -15,12 +15,10 @@ async function loadTrips() {
   tripSelect.innerHTML = '<option value="">-- กรุณาเลือกรอบรถ --</option>';
 
   try {
-    // กรองเฉพาะรอบรถที่ active และวันที่เป็นวันนี้หรืออนาคต
-    const today = new Date().toISOString().split('T')[0];
+    // โหลดรอบรถที่ active = true
     const q = query(
       collection(db, "trips"), 
-      where("active", "==", true),
-      where("date", ">=", today)
+      where("active", "==", true)
     );
     const querySnapshot = await getDocs(q);
 
@@ -29,16 +27,18 @@ async function loadTrips() {
       return;
     }
 
-    // เรียงข้อมูลตามวันที่และเวลา
+    // เรียงข้อมูลตามวันที่และเวลา (ถ้ามี)
     const trips = [];
     querySnapshot.forEach((doc) => {
       trips.push({ id: doc.id, ...doc.data() });
     });
 
     trips.sort((a, b) => {
-      if (a.date !== b.date) {
+      // ถ้ามีวันที่ให้เรียงตามวันที่
+      if (a.date && b.date && a.date !== b.date) {
         return a.date.localeCompare(b.date);
       }
+      // ถ้าไม่มีวันที่หรือวันที่เหมือนกัน ให้เรียงตามเวลา
       return a.time.localeCompare(b.time);
     });
 
@@ -47,27 +47,37 @@ async function loadTrips() {
       const option = document.createElement("option");
       option.value = trip.id;
       
-      // แปลงวันที่เป็นภาษาไทย
-      const tripDate = new Date(trip.date);
-      const formattedDate = tripDate.toLocaleDateString('th-TH', {
-        day: 'numeric',
-        month: 'short'
-      });
+      // สร้างข้อความแสดงรอบรถ
+      let displayText = '';
       
-      option.textContent = `${formattedDate} | ${trip.time} | ${trip.routeName} | ${trip.seats} ที่ | ฿${trip.price}`;
+      // ถ้ามีวันที่ ให้แสดงวันที่
+      if (trip.date) {
+        const tripDate = new Date(trip.date);
+        const formattedDate = tripDate.toLocaleDateString('th-TH', {
+          day: 'numeric',
+          month: 'short'
+        });
+        displayText += `${formattedDate} | `;
+      }
+      
+      // แสดงข้อมูลรอบรถ
+      const routeName = trip.route || trip.routeName || 'ไม่ระบุเส้นทาง';
+      displayText += `${trip.time} | ${routeName} | ${trip.seats} ที่ | ฿${trip.price}`;
+      
+      option.textContent = displayText;
       option.dataset.seats = trip.seats;
       option.dataset.price = trip.price;
       option.dataset.memberDiscount = trip.memberDiscount || 0;
-      option.dataset.route = trip.routeName;
+      option.dataset.route = routeName;
       option.dataset.time = trip.time;
-      option.dataset.date = trip.date;
+      option.dataset.date = trip.date || new Date().toISOString().split('T')[0]; // ถ้าไม่มี date ใช้วันนี้
       tripSelect.appendChild(option);
     });
 
-    console.log("✅ โหลดรอบรถสำเร็จ");
+    console.log("✅ โหลดรอบรถสำเร็จ:", trips.length, "รอบ");
   } catch (error) {
     console.error("❌ Error loading trips:", error);
-    alert("เกิดข้อผิดพลาดในการโหลดรอบรถ");
+    showError("เกิดข้อผิดพลาดในการโหลดรอบรถ", "ผิดพลาด");
   }
 }
 
