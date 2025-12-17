@@ -101,7 +101,14 @@
         id="phone"
         placeholder="0812345678"
         autocomplete="tel"
+        maxlength="10"
       >
+      
+      <!-- แสดงสถานะการตรวจสอบสมาชิก -->
+      <div id="memberCheckStatus" style="display: none; margin-top: 8px; padding: 10px; border-radius: 8px; font-size: 0.9em;">
+        <span id="memberCheckIcon"></span>
+        <span id="memberCheckText"></span>
+      </div>
 
       <label for="seats">จำนวนที่นั่งที่ต้องการจอง</label>
       <input
@@ -145,6 +152,7 @@
     window.currentPriceType = 'customer'; // default - ทำให้เป็น global
     let currentBasePrice = 0;
     let currentMemberDiscount = 0; // เปอร์เซ็นต์
+    let checkMemberTimeout = null; // สำหรับ debounce
 
     function selectPriceType(type) {
       const buttons = document.querySelectorAll('.price-btn');
@@ -203,8 +211,102 @@
       }
     }
 
-    // เพิ่ม event listener สำหรับการเลือกรอบรถ
+    // ===== ตรวจสอบสมาชิกอัตโนมัติเมื่อกรอกเบอร์โทร =====
+    async function checkMemberStatus(phone) {
+      const statusDiv = document.getElementById('memberCheckStatus');
+      const iconSpan = document.getElementById('memberCheckIcon');
+      const textSpan = document.getElementById('memberCheckText');
+      
+      // ซ่อนสถานะถ้าเบอร์ไม่ครบ 10 หลัก
+      if (phone.length !== 10 || !/^0[0-9]{9}$/.test(phone)) {
+        statusDiv.style.display = 'none';
+        return;
+      }
+
+      try {
+        // Import Firebase functions
+        const { collection, query, where, getDocs } = await import("https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js");
+        const { db } = await import("./js/firebase.js");
+
+        // แสดงสถานะกำลังตรวจสอบ
+        statusDiv.style.display = 'block';
+        statusDiv.style.background = '#e3f2fd';
+        statusDiv.style.borderLeft = '4px solid #2196F3';
+        iconSpan.textContent = '🔍 ';
+        textSpan.textContent = 'กำลังตรวจสอบสมาชิก...';
+
+        // ตรวจสอบในฐานข้อมูล
+        const memberQuery = query(
+          collection(db, "members"), 
+          where("phone", "==", phone)
+        );
+        const memberSnapshot = await getDocs(memberQuery);
+
+        if (!memberSnapshot.empty) {
+          // พบสมาชิก
+          const memberData = memberSnapshot.docs[0].data();
+          
+          statusDiv.style.background = '#e8f5e9';
+          statusDiv.style.borderLeft = '4px solid #4caf50';
+          iconSpan.textContent = '⭐ ';
+          textSpan.innerHTML = `<strong>พบสมาชิก:</strong> ${memberData.fullName}<br><small style="color: #2e7d32;">จะได้รับส่วนลดสมาชิกอัตโนมัติ</small>`;
+          
+          // เปลี่ยนเป็นลูกค้าสมาชิกอัตโนมัติ
+          if (window.currentPriceType !== 'member') {
+            selectPriceType('member');
+          }
+        } else {
+          // ไม่พบสมาชิก
+          statusDiv.style.background = '#fff3e0';
+          statusDiv.style.borderLeft = '4px solid #ff9800';
+          iconSpan.textContent = 'ℹ️ ';
+          textSpan.innerHTML = `<strong>ไม่พบสมาชิก</strong><br><small style="color: #e65100;">จองด้วยราคาทั่วไป หรือ <a href="register-member.html" style="color: #ff9800; font-weight: 600;">สมัครสมาชิก</a></small>`;
+          
+          // เปลี่ยนเป็นลูกค้าทั่วไปอัตโนมัติ
+          if (window.currentPriceType !== 'customer') {
+            selectPriceType('customer');
+          }
+        }
+
+      } catch (error) {
+        console.error("Error checking member:", error);
+        statusDiv.style.display = 'none';
+      }
+    }
+
+    // เพิ่ม event listener สำหรับเบอร์โทร
     document.addEventListener('DOMContentLoaded', function() {
+      const phoneInput = document.getElementById('phone');
+      
+      if (phoneInput) {
+        phoneInput.addEventListener('input', function(e) {
+          // ลบอักขระที่ไม่ใช่ตัวเลข
+          this.value = this.value.replace(/[^0-9]/g, '');
+          
+          const phone = this.value.trim();
+          
+          // ใช้ debounce เพื่อไม่ให้เรียก API บ่อยเกินไป
+          clearTimeout(checkMemberTimeout);
+          
+          if (phone.length === 10) {
+            checkMemberTimeout = setTimeout(() => {
+              checkMemberStatus(phone);
+            }, 500); // รอ 0.5 วินาที
+          } else {
+            // ซ่อนสถานะถ้าเบอร์ไม่ครบ
+            document.getElementById('memberCheckStatus').style.display = 'none';
+          }
+        });
+
+        // เมื่อ blur (คลิกออกจาก input)
+        phoneInput.addEventListener('blur', function() {
+          const phone = this.value.trim();
+          if (phone.length === 10) {
+            checkMemberStatus(phone);
+          }
+        });
+      }
+
       const tripSelect = document.getElementById('tripSelect');
       if (tripSelect) {
         tripSelect.addEventListener('change', updatePriceDisplay);
@@ -214,6 +316,7 @@
     // Export functions for global access
     window.selectPriceType = selectPriceType;
     window.updatePriceDisplay = updatePriceDisplay;
+    window.checkMemberStatus = checkMemberStatus;
   </script>
 
 </body>
