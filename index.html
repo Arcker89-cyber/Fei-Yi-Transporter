@@ -50,11 +50,15 @@
         </button>
       </div>
 
-      <div style="text-align: center; margin-top: 15px;">
-        <a href="register-member.html" style="color: #FF9800; text-decoration: none; font-weight: 600;">
-          ⭐ ยังไม่เป็นสมาชิก? สมัครเลย!
-        </a>
-      </div>
+      <!-- ปุ่มสมัครสมาชิกเด่น -->
+      <a href="register-member.html" class="register-member-btn">
+        <span class="btn-icon">⭐</span>
+        <div class="btn-text">
+          <strong>ยังไม่เป็นสมาชิก?</strong>
+          <span>สมัครเลย! รับส่วนลดทันที</span>
+        </div>
+        <span class="btn-arrow">→</span>
+      </a>
     </section>
 
     <!-- เลือกรอบรถ -->
@@ -212,6 +216,8 @@
     }
 
     // ===== ตรวจสอบสมาชิกอัตโนมัติเมื่อกรอกเบอร์โทร =====
+    let currentMemberData = null; // เก็บข้อมูลสมาชิก
+
     async function checkMemberStatus(phone) {
       const statusDiv = document.getElementById('memberCheckStatus');
       const iconSpan = document.getElementById('memberCheckIcon');
@@ -220,6 +226,7 @@
       // ซ่อนสถานะถ้าเบอร์ไม่ครบ 10 หลัก
       if (phone.length !== 10 || !/^0[0-9]{9}$/.test(phone)) {
         statusDiv.style.display = 'none';
+        currentMemberData = null;
         return;
       }
 
@@ -245,6 +252,7 @@
         if (!memberSnapshot.empty) {
           // พบสมาชิก
           const memberData = memberSnapshot.docs[0].data();
+          currentMemberData = memberData; // เก็บข้อมูล
           
           statusDiv.style.background = '#e8f5e9';
           statusDiv.style.borderLeft = '4px solid #4caf50';
@@ -255,12 +263,23 @@
           if (window.currentPriceType !== 'member') {
             selectPriceType('member');
           }
+
+          // Auto-fill ชื่อถ้ายังไม่ได้กรอก
+          const nameInput = document.getElementById('name');
+          if (!nameInput.value.trim()) {
+            nameInput.value = memberData.fullName;
+          }
         } else {
           // ไม่พบสมาชิก
+          currentMemberData = null;
+          
           statusDiv.style.background = '#fff3e0';
           statusDiv.style.borderLeft = '4px solid #ff9800';
           iconSpan.textContent = 'ℹ️ ';
-          textSpan.innerHTML = `<strong>ไม่พบสมาชิก</strong><br><small style="color: #e65100;">จองด้วยราคาทั่วไป หรือ <a href="register-member.html" style="color: #ff9800; font-weight: 600;">สมัครสมาชิก</a></small>`;
+          textSpan.innerHTML = `
+            <strong>ไม่พบสมาชิก</strong><br>
+            <small style="color: #e65100;">จองด้วยราคาทั่วไป</small>
+          `;
           
           // เปลี่ยนเป็นลูกค้าทั่วไปอัตโนมัติ
           if (window.currentPriceType !== 'customer') {
@@ -271,13 +290,51 @@
       } catch (error) {
         console.error("Error checking member:", error);
         statusDiv.style.display = 'none';
+        currentMemberData = null;
       }
     }
 
-    // เพิ่ม event listener สำหรับเบอร์โทร
+    // ===== ตรวจสอบสมาชิกเมื่อกรอกชื่อ =====
+    async function checkMemberByName(name) {
+      if (!name || name.length < 3) {
+        return; // ต้องกรอกอย่างน้อย 3 ตัวอักษร
+      }
+
+      try {
+        const { collection, query, where, getDocs } = await import("https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js");
+        const { db } = await import("./js/firebase.js");
+
+        // ค้นหาชื่อที่ตรงกัน
+        const memberQuery = query(
+          collection(db, "members"), 
+          where("fullName", "==", name)
+        );
+        const memberSnapshot = await getDocs(memberQuery);
+
+        if (!memberSnapshot.empty) {
+          // พบสมาชิก
+          const memberData = memberSnapshot.docs[0].data();
+          currentMemberData = memberData;
+
+          // Auto-fill เบอร์โทร
+          const phoneInput = document.getElementById('phone');
+          if (!phoneInput.value.trim()) {
+            phoneInput.value = memberData.phone;
+            // เรียก checkMemberStatus เพื่อแสดงสถานะ
+            await checkMemberStatus(memberData.phone);
+          }
+        }
+      } catch (error) {
+        console.error("Error checking member by name:", error);
+      }
+    }
+
+    // เพิ่ม event listener สำหรับเบอร์โทรและชื่อ
     document.addEventListener('DOMContentLoaded', function() {
       const phoneInput = document.getElementById('phone');
+      const nameInput = document.getElementById('name');
       
+      // Event listener สำหรับเบอร์โทร
       if (phoneInput) {
         phoneInput.addEventListener('input', function(e) {
           // ลบอักขระที่ไม่ใช่ตัวเลข
@@ -295,6 +352,7 @@
           } else {
             // ซ่อนสถานะถ้าเบอร์ไม่ครบ
             document.getElementById('memberCheckStatus').style.display = 'none';
+            currentMemberData = null;
           }
         });
 
@@ -303,6 +361,23 @@
           const phone = this.value.trim();
           if (phone.length === 10) {
             checkMemberStatus(phone);
+          }
+        });
+      }
+
+      // Event listener สำหรับชื่อ
+      if (nameInput) {
+        let checkNameTimeout = null;
+        
+        nameInput.addEventListener('blur', function() {
+          const name = this.value.trim();
+          
+          clearTimeout(checkNameTimeout);
+          
+          if (name.length >= 3) {
+            checkNameTimeout = setTimeout(() => {
+              checkMemberByName(name);
+            }, 500);
           }
         });
       }
