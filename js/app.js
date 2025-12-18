@@ -266,40 +266,19 @@ document.getElementById("bookBtn").addEventListener("click", async () => {
             day: 'numeric'
           });
 
-          let successMsg = `
-            <div style="text-align: center; padding: 20px;">
-              <div style="font-size: 4em; margin-bottom: 15px;">✅</div>
-              <h2 style="color: #27ae60; margin-bottom: 20px;">จองสำเร็จ!</h2>
-              
-              <div style="background: #f8f9fa; padding: 20px; border-radius: 10px; text-align: left; margin-bottom: 20px;">
-                <p><strong>📅 วันที่เดินทาง:</strong> ${displayDate}</p>
-                <p><strong>🕐 เวลา:</strong> ${bookingData.time}</p>
-                <p><strong>📍 เส้นทาง:</strong> ${bookingData.route}</p>
-                <p><strong>👤 ชื่อ:</strong> ${bookingData.customerName}</p>
-                <p><strong>📞 เบอร์:</strong> ${bookingData.customerPhone}</p>
-                <p><strong>💺 ที่นั่ง:</strong> ${bookingData.seats} ที่นั่ง</p>
-          `;
-
-          if (isMemberBooking && totalDiscount > 0) {
-            successMsg += `
-                <p style="color: #27ae60;"><strong>🎁 ส่วนลดสมาชิก:</strong> -฿${totalDiscount.toLocaleString()}</p>
-            `;
-          }
-
-          successMsg += `
-                <p style="font-size: 1.3em; color: #667eea; margin-top: 10px;"><strong>💰 ราคารวม:</strong> ฿${bookingData.totalPrice.toLocaleString()}</p>
-              </div>
-              
-              <div style="background: #fff3cd; padding: 15px; border-radius: 8px; border-left: 4px solid #f39c12;">
-                <p style="color: #856404; margin: 0;">
-                  ⚠️ <strong>กรุณาชำระเงินก่อนขึ้นรถ</strong><br>
-                  และแจ้งเบอร์โทร ${bookingData.customerPhone} กับพนักงาน
-                </p>
-              </div>
-            </div>
-          `;
-
-          showAlert(successMsg, "🎉 จองคิวสำเร็จ", "success");
+          // แสดง Booking Summary Modal
+          showBookingSummary({
+            route: bookingData.route,
+            time: bookingData.time,
+            date: bookingData.date,
+            name: bookingData.customerName,
+            phone: bookingData.customerPhone,
+            seats: bookingData.seats,
+            pricePerSeat: basePrice,
+            totalPrice: bookingData.totalPrice,
+            discount: totalDiscount,
+            isMember: isMemberBooking
+          });
 
           // Clear form
           document.getElementById("name").value = "";
