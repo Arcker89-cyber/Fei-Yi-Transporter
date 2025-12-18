@@ -726,3 +726,204 @@ body {
     margin-bottom: 5px;
   }
 }
+
+/* ===== Data Table Styles ===== */
+.table-wrapper {
+  overflow-x: auto;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.95em;
+}
+
+.data-table thead {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+}
+
+.data-table th {
+  padding: 15px 12px;
+  text-align: left;
+  font-weight: 700;
+  font-size: 0.9em;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.data-table tbody tr {
+  border-bottom: 1px solid #e0e0e0;
+  transition: background 0.2s;
+}
+
+.data-table tbody tr:hover {
+  background: #f8f9fa;
+}
+
+.data-table tbody tr:last-child {
+  border-bottom: none;
+}
+
+.data-table td {
+  padding: 15px 12px;
+  vertical-align: middle;
+}
+
+.data-table .text-center {
+  text-align: center;
+}
+
+/* Member Name */
+.member-name {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.member-name strong {
+  font-size: 1.05em;
+  color: #333;
+}
+
+.member-name small {
+  color: #7f8c8d;
+  font-size: 0.85em;
+}
+
+/* Contact Info */
+.contact-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.contact-info span {
+  font-weight: 600;
+  color: #333;
+}
+
+.contact-info small {
+  color: #7f8c8d;
+  font-size: 0.85em;
+}
+
+/* Code Style */
+code {
+  background: #f5f5f5;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-family: 'Courier New', monospace;
+  font-size: 0.9em;
+  color: #666;
+}
+
+/* Badges */
+.badge {
+  display: inline-block;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 0.85em;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.badge-success {
+  background: #e8f5e9;
+  color: #2e7d32;
+}
+
+.badge-danger {
+  background: #ffebee;
+  color: #c62828;
+}
+
+.badge-points {
+  background: #f3e5f5;
+  color: #7b1fa2;
+}
+
+.badge-bookings {
+  background: #e3f2fd;
+  color: #1565c0;
+}
+
+/* Action Buttons */
+.action-buttons {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+}
+
+.btn-action {
+  padding: 8px 12px;
+  border: none;
+  border-radius: 6px;
+  font-size: 1.1em;
+  cursor: pointer;
+  transition: all 0.3s;
+  background: white;
+  border: 2px solid #e0e0e0;
+}
+
+.btn-action:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.btn-action.btn-edit:hover {
+  border-color: #4caf50;
+  background: #e8f5e9;
+}
+
+.btn-action.btn-delete:hover {
+  border-color: #f44336;
+  background: #ffebee;
+}
+
+/* Responsive Table */
+@media (max-width: 1024px) {
+  .data-table {
+    font-size: 0.85em;
+  }
+  
+  .data-table th,
+  .data-table td {
+    padding: 10px 8px;
+  }
+}
+
+@media (max-width: 768px) {
+  .table-wrapper {
+    overflow-x: scroll;
+  }
+  
+  .data-table {
+    min-width: 800px;
+  }
+}
+
+/* Additional Badge Styles */
+.badge-warning {
+  background: #fff3e0;
+  color: #e65100;
+}
+
+.badge-price {
+  background: #e8f5e9;
+  color: #2e7d32;
+  font-weight: 700;
+}
+
+.badge-discount {
+  background: #fff3e0;
+  color: #f57c00;
+}
+
+.badge-seats {
+  background: #e3f2fd;
+  color: #1565c0;
+}
