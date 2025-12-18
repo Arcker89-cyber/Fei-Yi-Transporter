@@ -29,7 +29,11 @@ export async function logout() {
     window.location.href = 'admin-login.html';
   } catch (error) {
     console.error('❌ Logout error:', error);
-    alert('เกิดข้อผิดพลาดในการออกจากระบบ');
+    if (typeof showError === 'function') {
+      await showError('เกิดข้อผิดพลาดในการออกจากระบบ');
+    } else {
+      alert('เกิดข้อผิดพลาดในการออกจากระบบ');
+    }
   }
 }
 

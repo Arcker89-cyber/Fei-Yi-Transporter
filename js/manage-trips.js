@@ -19,7 +19,8 @@ requireAuth().catch(() => {
 // ===== Logout Button =====
 document.getElementById('logoutBtn')?.addEventListener('click', async (e) => {
   e.preventDefault();
-  if (confirm('คุณต้องการออกจากระบบหรือไม่?')) {
+  const confirmed = await showConfirm('คุณต้องการออกจากระบบหรือไม่?', '🚪 ออกจากระบบ', '❓');
+  if (confirmed) {
     await logout();
   }
 });
@@ -45,23 +46,23 @@ document.getElementById("tripForm").addEventListener("submit", async (e) => {
 
   // Validation
   if (data.seats < 1) {
-    alert("⚠️ จำนวนที่นั่งต้องมากกว่า 0");
+    await showWarning("จำนวนที่นั่งต้องมากกว่า 0");
     return;
   }
 
   if (data.price < 0) {
-    alert("⚠️ ราคาต้องไม่ติดลบ");
+    await showWarning("ราคาต้องไม่ติดลบ");
     return;
   }
 
   if (data.memberDiscount < 0 || data.memberDiscount > 100) {
-    alert("⚠️ ส่วนลดสมาชิกต้องอยู่ระหว่าง 0-100%");
+    await showWarning("ส่วนลดสมาชิกต้องอยู่ระหว่าง 0-100%");
     return;
   }
 
   try {
     await addDoc(collection(db, "trips"), data);
-    alert("✅ เพิ่มรอบรถเรียบร้อย");
+    await showSuccess("เพิ่มรอบรถเรียบร้อย");
     
     // Reset form
     document.getElementById("tripForm").reset();
@@ -76,7 +77,7 @@ document.getElementById("tripForm").addEventListener("submit", async (e) => {
     await loadTrips();
   } catch (error) {
     console.error("❌ Error:", error);
-    alert("เกิดข้อผิดพลาด กรุณาลองใหม่");
+    await showError("เกิดข้อผิดพลาด กรุณาลองใหม่");
   }
 });
 
@@ -225,7 +226,7 @@ window.openEditModal = async (tripId) => {
     });
 
     if (!tripData) {
-      alert("❌ ไม่พบข้อมูลรอบรถ");
+      await showError("ไม่พบข้อมูลรอบรถ");
       return;
     }
 
@@ -244,7 +245,7 @@ window.openEditModal = async (tripId) => {
 
   } catch (error) {
     console.error("❌ Error:", error);
-    alert("เกิดข้อผิดพลาด");
+    await showError("เกิดข้อผิดพลาด");
   }
 };
 
@@ -274,12 +275,12 @@ document.getElementById("editForm").addEventListener("submit", async (e) => {
   }
 
   if (data.price < 0) {
-    alert("⚠️ ราคาต้องไม่ติดลบ");
+    await showWarning("ราคาต้องไม่ติดลบ");
     return;
   }
 
   if (data.memberDiscount < 0 || data.memberDiscount > 100) {
-    alert("⚠️ ส่วนลดสมาชิกต้องอยู่ระหว่าง 0-100%");
+    await showWarning("ส่วนลดสมาชิกต้องอยู่ระหว่าง 0-100%");
     return;
   }
 
@@ -287,13 +288,13 @@ document.getElementById("editForm").addEventListener("submit", async (e) => {
     const tripRef = doc(db, "trips", tripId);
     await updateDoc(tripRef, data);
     
-    alert("✅ แก้ไขรอบรถเรียบร้อย");
+    await showSuccess("แก้ไขรอบรถเรียบร้อย");
     closeEditModal();
     await loadTrips();
     
   } catch (error) {
     console.error("❌ Error:", error);
-    alert("เกิดข้อผิดพลาด กรุณาลองใหม่");
+    await showError("เกิดข้อผิดพลาด กรุณาลองใหม่");
   }
 });
 
@@ -301,18 +302,20 @@ document.getElementById("editForm").addEventListener("submit", async (e) => {
 window.deleteTrip = async (tripId, route) => {
   const confirmMsg = `คุณแน่ใจหรือไม่ที่จะลบรอบรถ?\n\n📍 ${route}\n\n⚠️ การกระทำนี้ไม่สามารถย้อนกลับได้`;
   
-  if (!confirm(confirmMsg)) {
+  const confirmed = await showConfirm(confirmMsg, '🗑️ ลบรอบรถ', '⚠️');
+  
+  if (!confirmed) {
     return;
   }
 
   try {
     await deleteDoc(doc(db, "trips", tripId));
-    alert("✅ ลบรอบรถเรียบร้อย");
+    await showSuccess("ลบรอบรถเรียบร้อย");
     await loadTrips();
     
   } catch (error) {
     console.error("❌ Error:", error);
-    alert("เกิดข้อผิดพลาด กรุณาลองใหม่");
+    await showError("เกิดข้อผิดพลาด กรุณาลองใหม่");
   }
 };
 

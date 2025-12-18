@@ -17,7 +17,12 @@ requireAuth().catch(() => {
 // ===== Logout Button =====
 document.getElementById('logoutBtn')?.addEventListener('click', async (e) => {
   e.preventDefault();
-  if (confirm('คุณต้องการออกจากระบบหรือไม่?')) {
+  const confirmed = await showConfirm(
+    'คุณต้องการออกจากระบบหรือไม่?',
+    '🚪 ออกจากระบบ',
+    '❓'
+  );
+  if (confirmed) {
     await logout();
   }
 });
