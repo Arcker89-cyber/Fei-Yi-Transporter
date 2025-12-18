@@ -927,3 +927,9 @@ code {
   background: #e3f2fd;
   color: #1565c0;
 }
+
+/* Badge Info */
+.badge-info {
+  background: #e1f5fe;
+  color: #01579b;
+}
