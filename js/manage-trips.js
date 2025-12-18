@@ -100,7 +100,23 @@ async function loadTrips() {
       return;
     }
 
-    let html = '';
+    let html = `
+      <div class="table-wrapper">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>เส้นทาง</th>
+              <th>วันที่</th>
+              <th>เวลา</th>
+              <th>ราคา</th>
+              <th>ส่วนลด</th>
+              <th>ที่นั่ง</th>
+              <th>สถานะ</th>
+              <th>จัดการ</th>
+            </tr>
+          </thead>
+          <tbody>
+    `;
 
     querySnapshot.forEach((docSnap) => {
       const trip = docSnap.data();
@@ -109,60 +125,79 @@ async function loadTrips() {
       const isFull = trip.seats === 0;
       const isLowSeats = trip.seats > 0 && trip.seats <= 3;
       
-      let cardClass = trip.active ? '' : 'inactive';
-      if (isFull) cardClass = 'full';
-      
       let statusBadge = trip.active ? 
-        '<span class="status-badge active">✅ เปิดใช้งาน</span>' : 
-        '<span class="status-badge inactive">❌ ปิดใช้งาน</span>';
+        '<span class="badge badge-success">✅ เปิดใช้งาน</span>' : 
+        '<span class="badge badge-danger">❌ ปิดใช้งาน</span>';
       
       if (isFull) {
-        statusBadge = '<span class="status-badge full">⚠️ เต็ม</span>';
+        statusBadge = '<span class="badge badge-warning">⚠️ เต็ม</span>';
       }
       
       let seatsClass = '';
-      if (isFull) seatsClass = 'full';
-      else if (isLowSeats) seatsClass = 'low';
+      let seatsBadge = 'badge-seats';
+      if (isFull) {
+        seatsClass = 'full';
+        seatsBadge = 'badge-danger';
+      } else if (isLowSeats) {
+        seatsClass = 'low';
+        seatsBadge = 'badge-warning';
+      }
 
       const memberDiscount = trip.memberDiscount || 0;
       
-      // แสดงวันที่ถ้ามี
-      let dateDisplay = '';
+      // แสดงวันที่
+      let dateDisplay = '-';
       if (trip.date) {
         const tripDate = new Date(trip.date);
-        const formattedDate = tripDate.toLocaleDateString('th-TH', {
-          weekday: 'short',
-          year: 'numeric',
+        dateDisplay = tripDate.toLocaleDateString('th-TH', {
+          day: 'numeric',
           month: 'short',
-          day: 'numeric'
+          year: 'numeric'
         });
-        dateDisplay = `<p><strong>📅 วันที่:</strong> ${formattedDate}</p>`;
       }
 
       html += `
-        <div class="trip-card ${cardClass}">
-          <div class="trip-info">
-            <h3>🚐 ${trip.route}</h3>
+        <tr>
+          <td>
+            <strong>🚐 ${trip.route}</strong>
+          </td>
+          <td class="text-center">
             ${dateDisplay}
-            <p><strong>🕐 เวลา:</strong> ${trip.time}</p>
-            <p><strong>💰 ราคา:</strong> ฿${trip.price}</p>
-            <p><strong>🎁 ส่วนลดสมาชิก:</strong> ${memberDiscount}%</p>
-            <p><strong>💺 ที่นั่งว่าง:</strong> <span class="seats-info ${seatsClass}">${trip.seats} ที่นั่ง</span></p>
-          </div>
-          <div class="trip-status">
+          </td>
+          <td class="text-center">
+            <strong>🕐 ${trip.time}</strong>
+          </td>
+          <td class="text-center">
+            <span class="badge badge-price">฿${trip.price}</span>
+          </td>
+          <td class="text-center">
+            <span class="badge badge-discount">🎁 ${memberDiscount}%</span>
+          </td>
+          <td class="text-center">
+            <span class="badge ${seatsBadge}">💺 ${trip.seats}</span>
+          </td>
+          <td class="text-center">
             ${statusBadge}
-            <div style="display: flex; gap: 8px; margin-top: 10px;">
-              <button class="btn-primary btn-small" onclick="openEditModal('${tripId}')">
-                ✏️ แก้ไข
+          </td>
+          <td class="text-center">
+            <div class="action-buttons">
+              <button class="btn-action btn-edit" onclick="openEditModal('${tripId}')" title="แก้ไข">
+                ✏️
               </button>
-              <button class="btn-danger btn-small" onclick="deleteTrip('${tripId}', '${trip.route}')">
-                🗑️ ลบ
+              <button class="btn-action btn-delete" onclick="deleteTrip('${tripId}', '${trip.route}')" title="ลบ">
+                🗑️
               </button>
             </div>
-          </div>
-        </div>
+          </td>
+        </tr>
       `;
     });
+
+    html += `
+          </tbody>
+        </table>
+      </div>
+    `;
 
     container.innerHTML = html;
 
