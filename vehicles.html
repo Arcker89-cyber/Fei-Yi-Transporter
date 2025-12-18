@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>จัดการรถ | Fei Yi Transporter</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/admin-style.css">
+  <link rel="stylesheet" href="css/custom-modal.css">
+</head>
+<body>
+
+  <!-- ===== Sidebar ===== -->
+  <aside class="sidebar">
+    <div class="sidebar-header">
+      <h2>🚐 Admin Panel</h2>
+    </div>
+    
+    <nav class="sidebar-nav">
+      <a href="dashboard.html">
+        <span class="icon">📊</span>
+        Dashboard
+      </a>
+      <a href="manage-trips.html">
+        <span class="icon">🚐</span>
+        จัดการรอบรถ
+      </a>
+      <a href="bookings.html">
+        <span class="icon">📋</span>
+        รายการจอง
+      </a>
+      <a href="members.html">
+        <span class="icon">⭐</span>
+        ข้อมูลสมาชิก
+      </a>
+      <a href="vehicles.html" class="active">
+        <span class="icon">🚙</span>
+        จัดการรถ
+      </a>
+      <a href="drivers.html">
+        <span class="icon">👨‍✈️</span>
+        จัดการคนขับ
+      </a>
+      
+      <div class="spacer"></div>
+      
+      <a href="index.html">
+        <span class="icon">🏠</span>
+        กลับหน้าหลัก
+      </a>
+      <a href="#" id="logoutBtn" class="logout-btn">
+        <span class="icon">🚪</span>
+        ออกจากระบบ
+      </a>
+    </nav>
+  </aside>
+
+  <!-- ===== Main Content ===== -->
+  <main class="main-content">
+    
+    <!-- Header -->
+    <header class="content-header">
+      <h1>🚙 จัดการรถ</h1>
+      <button class="btn-primary" onclick="openAddModal()">
+        ➕ เพิ่มรถใหม่
+      </button>
+    </header>
+
+    <!-- Stats Cards -->
+    <div class="stats-grid" id="statsCards">
+      <div class="stat-card">
+        <div class="stat-icon">🚙</div>
+        <div class="stat-info">
+          <h3 id="totalVehicles">0</h3>
+          <p>รถทั้งหมด</p>
+        </div>
+      </div>
+      
+      <div class="stat-card">
+        <div class="stat-icon">✅</div>
+        <div class="stat-info">
+          <h3 id="activeVehicles">0</h3>
+          <p>ใช้งานอยู่</p>
+        </div>
+      </div>
+      
+      <div class="stat-card">
+        <div class="stat-icon">💺</div>
+        <div class="stat-info">
+          <h3 id="totalSeats">0</h3>
+          <p>ที่นั่งทั้งหมด</p>
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-icon">🚐</div>
+        <div class="stat-info">
+          <h3 id="vanCount">0</h3>
+          <p>รถตู้</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Search & Filter -->
+    <div class="filter-controls">
+      <input 
+        type="text" 
+        id="searchInput" 
+        placeholder="🔍 ค้นหาทะเบียนรถ..."
+      >
+      <select id="typeFilter">
+        <option value="all">ทุกประเภท</option>
+        <option value="van">รถตู้</option>
+        <option value="bus">รถบัส</option>
+        <option value="vip">รถ VIP</option>
+      </select>
+      <select id="statusFilter">
+        <option value="all">ทุกสถานะ</option>
+        <option value="active">ใช้งานอยู่</option>
+        <option value="inactive">ไม่ใช้งาน</option>
+      </select>
+    </div>
+
+    <!-- Vehicles List -->
+    <div id="vehiclesList"></div>
+
+  </main>
+
+  <!-- ===== Add/Edit Modal ===== -->
+  <div id="vehicleModal" class="modal">
+    <div class="modal-overlay" onclick="closeVehicleModal()"></div>
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 id="modalTitle">➕ เพิ่มรถใหม่</h2>
+        <button class="modal-close" onclick="closeVehicleModal()">✕</button>
+      </div>
+      <form id="vehicleForm">
+        <input type="hidden" id="vehicleId">
+        
+        <div class="form-group">
+          <label for="licensePlate">ทะเบียนรถ *</label>
+          <input 
+            type="text" 
+            id="licensePlate" 
+            placeholder="เช่น กข 1234 กรุงเทพ"
+            required
+          >
+        </div>
+
+        <div class="form-group">
+          <label for="vehicleType">ประเภทรถ *</label>
+          <select id="vehicleType" required>
+            <option value="">-- เลือกประเภท --</option>
+            <option value="van">🚐 รถตู้</option>
+            <option value="bus">🚌 รถบัส</option>
+            <option value="vip">✨ รถ VIP</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="seats">จำนวนที่นั่ง *</label>
+          <input 
+            type="number" 
+            id="seats" 
+            placeholder="เช่น 12"
+            min="1"
+            max="50"
+            required
+          >
+        </div>
+
+        <div class="form-group">
+          <label for="brand">ยี่ห้อ/รุ่น</label>
+          <input 
+            type="text" 
+            id="brand" 
+            placeholder="เช่น Toyota Commuter"
+          >
+        </div>
+
+        <div class="form-group">
+          <label for="year">ปีรถ</label>
+          <input 
+            type="number" 
+            id="year" 
+            placeholder="เช่น 2023"
+            min="2000"
+            max="2030"
+          >
+        </div>
+
+        <div class="form-group">
+          <label>
+            <input type="checkbox" id="status" checked>
+            <span>ใช้งานอยู่</span>
+          </label>
+        </div>
+
+        <div class="form-actions">
+          <button type="button" class="btn-secondary" onclick="closeVehicleModal()">
+            ❌ ยกเลิก
+          </button>
+          <button type="submit" class="btn-primary">
+            ✅ บันทึก
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script type="module" src="js/custom-modal.js"></script>
+  <script type="module" src="js/vehicles.js"></script>
+
+</body>
+</html>

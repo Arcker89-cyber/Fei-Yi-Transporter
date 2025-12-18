@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>จัดการคนขับ | Fei Yi Transporter</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/admin-style.css">
+  <link rel="stylesheet" href="css/custom-modal.css">
+</head>
+<body>
+
+  <!-- ===== Sidebar ===== -->
+  <aside class="sidebar">
+    <div class="sidebar-header">
+      <h2>🚐 Admin Panel</h2>
+    </div>
+    
+    <nav class="sidebar-nav">
+      <a href="dashboard.html">
+        <span class="icon">📊</span>
+        Dashboard
+      </a>
+      <a href="manage-trips.html">
+        <span class="icon">🚐</span>
+        จัดการรอบรถ
+      </a>
+      <a href="bookings.html">
+        <span class="icon">📋</span>
+        รายการจอง
+      </a>
+      <a href="members.html">
+        <span class="icon">⭐</span>
+        ข้อมูลสมาชิก
+      </a>
+      <a href="vehicles.html">
+        <span class="icon">🚙</span>
+        จัดการรถ
+      </a>
+      <a href="drivers.html" class="active">
+        <span class="icon">👨‍✈️</span>
+        จัดการคนขับ
+      </a>
+      
+      <div class="spacer"></div>
+      
+      <a href="index.html">
+        <span class="icon">🏠</span>
+        กลับหน้าหลัก
+      </a>
+      <a href="#" id="logoutBtn" class="logout-btn">
+        <span class="icon">🚪</span>
+        ออกจากระบบ
+      </a>
+    </nav>
+  </aside>
+
+  <!-- ===== Main Content ===== -->
+  <main class="main-content">
+    
+    <!-- Header -->
+    <header class="content-header">
+      <h1>👨‍✈️ จัดการคนขับ</h1>
+      <button class="btn-primary" onclick="openAddModal()">
+        ➕ เพิ่มคนขับใหม่
+      </button>
+    </header>
+
+    <!-- Stats Cards -->
+    <div class="stats-grid" id="statsCards">
+      <div class="stat-card">
+        <div class="stat-icon">👨‍✈️</div>
+        <div class="stat-info">
+          <h3 id="totalDrivers">0</h3>
+          <p>คนขับทั้งหมด</p>
+        </div>
+      </div>
+      
+      <div class="stat-card">
+        <div class="stat-icon">✅</div>
+        <div class="stat-info">
+          <h3 id="activeDrivers">0</h3>
+          <p>ใช้งานอยู่</p>
+        </div>
+      </div>
+      
+      <div class="stat-card">
+        <div class="stat-icon">📅</div>
+        <div class="stat-info">
+          <h3 id="expiringSoon">0</h3>
+          <p>ใบขับขี่ใกล้หมดอายุ</p>
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-icon">🚗</div>
+        <div class="stat-info">
+          <h3 id="totalTrips">0</h3>
+          <p>รอบทั้งหมด</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Search & Filter -->
+    <div class="filter-controls">
+      <input 
+        type="text" 
+        id="searchInput" 
+        placeholder="🔍 ค้นหาชื่อหรือเบอร์โทร..."
+      >
+      <select id="statusFilter">
+        <option value="all">ทุกสถานะ</option>
+        <option value="active">ใช้งานอยู่</option>
+        <option value="inactive">ไม่ใช้งาน</option>
+      </select>
+    </div>
+
+    <!-- Drivers List -->
+    <div id="driversList"></div>
+
+  </main>
+
+  <!-- ===== Add/Edit Modal ===== -->
+  <div id="driverModal" class="modal">
+    <div class="modal-overlay" onclick="closeDriverModal()"></div>
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 id="modalTitle">➕ เพิ่มคนขับใหม่</h2>
+        <button class="modal-close" onclick="closeDriverModal()">✕</button>
+      </div>
+      <form id="driverForm">
+        <input type="hidden" id="driverId">
+        
+        <div class="form-group">
+          <label for="fullName">ชื่อ-นามสกุล *</label>
+          <input 
+            type="text" 
+            id="fullName" 
+            placeholder="เช่น นายสมชาย ใจดี"
+            required
+          >
+        </div>
+
+        <div class="form-group">
+          <label for="phone">เบอร์โทรศัพท์ *</label>
+          <input 
+            type="tel" 
+            id="phone" 
+            placeholder="08xxxxxxxx"
+            pattern="0[0-9]{9}"
+            required
+          >
+          <small>รูปแบบ: 10 หลัก เริ่มต้นด้วย 0</small>
+        </div>
+
+        <div class="form-group">
+          <label for="licenseNumber">เลขใบขับขี่ *</label>
+          <input 
+            type="text" 
+            id="licenseNumber" 
+            placeholder="เช่น 12345678"
+            required
+          >
+        </div>
+
+        <div class="form-group">
+          <label for="licenseExpiry">วันหมดอายุใบขับขี่</label>
+          <input 
+            type="date" 
+            id="licenseExpiry"
+          >
+        </div>
+
+        <div class="form-group">
+          <label for="experience">ประสบการณ์ (ปี)</label>
+          <input 
+            type="number" 
+            id="experience" 
+            placeholder="เช่น 5"
+            min="0"
+          >
+        </div>
+
+        <div class="form-group">
+          <label for="notes">หมายเหตุ</label>
+          <textarea 
+            id="notes" 
+            rows="3"
+            placeholder="ข้อมูลเพิ่มเติม..."
+          ></textarea>
+        </div>
+
+        <div class="form-group">
+          <label>
+            <input type="checkbox" id="status" checked>
+            <span>ใช้งานอยู่</span>
+          </label>
+        </div>
+
+        <div class="form-actions">
+          <button type="button" class="btn-secondary" onclick="closeDriverModal()">
+            ❌ ยกเลิก
+          </button>
+          <button type="submit" class="btn-primary">
+            ✅ บันทึก
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script type="module" src="js/custom-modal.js"></script>
+  <script type="module" src="js/drivers.js"></script>
+
+</body>
+</html>
