@@ -15,7 +15,9 @@ import {
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 // ===== ตรวจสอบ Authentication =====
-requireAuth();
+requireAuth().catch(() => {
+  // จะ redirect ไป login อัตโนมัติ
+});
 
 // ===== Logout Button =====
 document.getElementById('logoutBtn')?.addEventListener('click', async (e) => {
@@ -34,9 +36,9 @@ document.getElementById('logoutBtn')?.addEventListener('click', async (e) => {
 let allDrivers = [];
 
 // ===== โหลดข้อมูลเมื่อเริ่มต้น =====
-document.addEventListener('DOMContentLoaded', () => {
-  loadDriverStats();
-  loadDrivers();
+document.addEventListener('DOMContentLoaded', async () => {
+  await loadDriverStats();
+  await loadDrivers();
   
   // Search
   document.getElementById('searchInput').addEventListener('input', function() {
