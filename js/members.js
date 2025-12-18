@@ -18,7 +18,12 @@ requireAuth().catch(() => {
 // ===== Logout Button =====
 document.getElementById('logoutBtn')?.addEventListener('click', async (e) => {
   e.preventDefault();
-  if (confirm('คุณต้องการออกจากระบบหรือไม่?')) {
+  const confirmed = await showConfirm(
+    'คุณต้องการออกจากระบบหรือไม่?',
+    '🚪 ออกจากระบบ',
+    '❓'
+  );
+  if (confirmed) {
     await logout();
   }
 });
@@ -229,7 +234,7 @@ window.openEditModal = async (memberId) => {
     const member = allMembers.find(m => m.id === memberId);
     
     if (!member) {
-      alert("❌ ไม่พบข้อมูลสมาชิก");
+      await showError("ไม่พบข้อมูลสมาชิก");
       return;
     }
 
@@ -246,7 +251,7 @@ window.openEditModal = async (memberId) => {
 
   } catch (error) {
     console.error("❌ Error:", error);
-    alert("เกิดข้อผิดพลาด");
+    await showError("เกิดข้อผิดพลาด");
   }
 };
 
@@ -270,7 +275,7 @@ document.getElementById("editForm").addEventListener("submit", async (e) => {
 
   // Validation
   if (!/^0[0-9]{9}$/.test(data.phone)) {
-    alert("⚠️ เบอร์โทรศัพท์ไม่ถูกต้อง (ต้องเป็น 10 หลัก เริ่มต้นด้วย 0)");
+    await showWarning("เบอร์โทรศัพท์ไม่ถูกต้อง\n(ต้องเป็น 10 หลัก เริ่มต้นด้วย 0)");
     return;
   }
 
@@ -278,7 +283,7 @@ document.getElementById("editForm").addEventListener("submit", async (e) => {
     const memberRef = doc(db, "members", memberId);
     await updateDoc(memberRef, data);
     
-    alert("✅ แก้ไขข้อมูลเรียบร้อย");
+    await showSuccess("แก้ไขข้อมูลเรียบร้อย");
     
     closeEditModal();
     
@@ -287,26 +292,32 @@ document.getElementById("editForm").addEventListener("submit", async (e) => {
     await loadMembers();
   } catch (error) {
     console.error("❌ Error:", error);
-    alert("เกิดข้อผิดพลาด กรุณาลองใหม่");
+    await showError("เกิดข้อผิดพลาด กรุณาลองใหม่");
   }
 });
 
 // ===== ลบสมาชิก =====
 window.deleteMember = async (memberId, memberName) => {
-  if (!confirm(`คุณต้องการลบสมาชิก "${memberName}" หรือไม่?\n\n⚠️ การดำเนินการนี้ไม่สามารถยกเลิกได้`)) {
+  const confirmed = await showConfirm(
+    `คุณต้องการลบสมาชิก "${memberName}" หรือไม่?\n\n⚠️ การดำเนินการนี้ไม่สามารถยกเลิกได้`,
+    '🗑️ ลบสมาชิก',
+    '⚠️'
+  );
+  
+  if (!confirmed) {
     return;
   }
 
   try {
     await deleteDoc(doc(db, "members", memberId));
-    alert("✅ ลบสมาชิกเรียบร้อย");
+    await showSuccess("ลบสมาชิกเรียบร้อย");
     
     // Reload data
     await loadMemberStats();
     await loadMembers();
   } catch (error) {
     console.error("❌ Error:", error);
-    alert("เกิดข้อผิดพลาด กรุณาลองใหม่");
+    await showError("เกิดข้อผิดพลาด กรุณาลองใหม่");
   }
 };
 
