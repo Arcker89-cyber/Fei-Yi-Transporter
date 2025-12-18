@@ -7,7 +7,8 @@ import {
   updateDoc,
   deleteDoc,
   orderBy,
-  query 
+  query,
+  getDoc
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 import { requireAuth, logout } from "./auth.js";
 
@@ -15,6 +16,10 @@ import { requireAuth, logout } from "./auth.js";
 requireAuth().catch(() => {
   // จะ redirect ไป login อัตโนมัติ
 });
+
+// ===== Global Variables =====
+let allVehicles = [];
+let allDrivers = [];
 
 // ===== Logout Button =====
 document.getElementById('logoutBtn')?.addEventListener('click', async (e) => {
@@ -25,6 +30,79 @@ document.getElementById('logoutBtn')?.addEventListener('click', async (e) => {
   }
 });
 
+// ===== โหลดข้อมูลเมื่อเริ่มต้น =====
+document.addEventListener('DOMContentLoaded', async () => {
+  await loadVehicles();
+  await loadDrivers();
+  await loadTrips();
+});
+
+// ===== โหลดรถ =====
+async function loadVehicles() {
+  try {
+    const querySnapshot = await getDocs(collection(db, "vehicles"));
+    allVehicles = [];
+    
+    querySnapshot.forEach((doc) => {
+      const vehicle = doc.data();
+      if (vehicle.status === 'active') {
+        allVehicles.push({ id: doc.id, ...vehicle });
+      }
+    });
+    
+    // เติมใน dropdown
+    const vehicleSelect = document.getElementById('vehicleId');
+    vehicleSelect.innerHTML = '<option value="">-- เลือกรถ (ถ้ามี) --</option>';
+    
+    allVehicles.forEach((vehicle) => {
+      const option = document.createElement('option');
+      option.value = vehicle.id;
+      
+      const vehicleTypeLabels = {
+        'van': '🚐',
+        'bus': '🚌',
+        'vip': '✨'
+      };
+      const icon = vehicleTypeLabels[vehicle.vehicleType] || '🚙';
+      
+      option.textContent = `${icon} ${vehicle.licensePlate} (${vehicle.seats} ที่นั่ง)`;
+      vehicleSelect.appendChild(option);
+    });
+    
+  } catch (error) {
+    console.error("❌ Error loading vehicles:", error);
+  }
+}
+
+// ===== โหลดคนขับ =====
+async function loadDrivers() {
+  try {
+    const querySnapshot = await getDocs(collection(db, "drivers"));
+    allDrivers = [];
+    
+    querySnapshot.forEach((doc) => {
+      const driver = doc.data();
+      if (driver.status === 'active') {
+        allDrivers.push({ id: doc.id, ...driver });
+      }
+    });
+    
+    // เติมใน dropdown
+    const driverSelect = document.getElementById('driverId');
+    driverSelect.innerHTML = '<option value="">-- เลือกคนขับ (ถ้ามี) --</option>';
+    
+    allDrivers.forEach((driver) => {
+      const option = document.createElement('option');
+      option.value = driver.id;
+      option.textContent = `👨‍✈️ ${driver.fullName} (${driver.phone})`;
+      driverSelect.appendChild(option);
+    });
+    
+  } catch (error) {
+    console.error("❌ Error loading drivers:", error);
+  }
+}
+
 // ===== เพิ่มรอบรถใหม่ =====
 // ตั้งค่าวันที่เป็นวันนี้
 const today = new Date().toISOString().split('T')[0];
@@ -32,6 +110,9 @@ document.getElementById("date").value = today;
 
 document.getElementById("tripForm").addEventListener("submit", async (e) => {
   e.preventDefault();
+
+  const vehicleId = document.getElementById("vehicleId").value;
+  const driverId = document.getElementById("driverId").value;
 
   const data = {
     route: document.getElementById("route").value,
@@ -43,6 +124,23 @@ document.getElementById("tripForm").addEventListener("submit", async (e) => {
     active: document.getElementById("active").checked,
     createdAt: new Date().toISOString()
   };
+
+  // เพิ่ม vehicleId และ driverId ถ้ามีการเลือก
+  if (vehicleId) {
+    data.vehicleId = vehicleId;
+    const vehicle = allVehicles.find(v => v.id === vehicleId);
+    if (vehicle) {
+      data.vehiclePlate = vehicle.licensePlate;
+    }
+  }
+
+  if (driverId) {
+    data.driverId = driverId;
+    const driver = allDrivers.find(d => d.id === driverId);
+    if (driver) {
+      data.driverName = driver.fullName;
+    }
+  }
 
   // Validation
   if (data.seats < 1) {
@@ -109,9 +207,10 @@ async function loadTrips() {
               <th>เส้นทาง</th>
               <th>วันที่</th>
               <th>เวลา</th>
-              <th>ราคา</th>
-              <th>ส่วนลด</th>
+              <th>รถ</th>
+              <th>คนขับ</th>
               <th>ที่นั่ง</th>
+              <th>ราคา</th>
               <th>สถานะ</th>
               <th>จัดการ</th>
             </tr>
@@ -169,13 +268,20 @@ async function loadTrips() {
             <strong>🕐 ${trip.time}</strong>
           </td>
           <td class="text-center">
-            <span class="badge badge-price">฿${trip.price}</span>
+            ${trip.vehiclePlate ? 
+              `<span class="badge badge-info">🚙 ${trip.vehiclePlate}</span>` : 
+              '<span style="color: #999;">-</span>'}
           </td>
           <td class="text-center">
-            <span class="badge badge-discount">🎁 ${memberDiscount}%</span>
+            ${trip.driverName ? 
+              `<span class="badge badge-info">👨‍✈️ ${trip.driverName}</span>` : 
+              '<span style="color: #999;">-</span>'}
           </td>
           <td class="text-center">
             <span class="badge ${seatsBadge}">💺 ${trip.seats}</span>
+          </td>
+          <td class="text-center">
+            <span class="badge badge-price">฿${trip.price}</span>
           </td>
           <td class="text-center">
             ${statusBadge}
