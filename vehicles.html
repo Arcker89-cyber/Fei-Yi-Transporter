@@ -13,50 +13,50 @@
 </head>
 <body>
 
-  <!-- ===== Sidebar ===== -->
-  <aside class="sidebar">
-    <div class="sidebar-header">
+  <!-- Sidebar Navigation -->
+  <div class="sidebar">
+    <div class="logo">
       <h2>🚐 Admin Panel</h2>
     </div>
     
-    <nav class="sidebar-nav">
-      <a href="dashboard.html">
+    <nav class="nav-menu">
+      <a href="dashboard.html" class="nav-item">
         <span class="icon">📊</span>
-        Dashboard
+        <span>Dashboard</span>
       </a>
-      <a href="manage-trips.html">
+      <a href="manage-trips.html" class="nav-item">
         <span class="icon">🚐</span>
-        จัดการรอบรถ
+        <span>จัดการรอบรถ</span>
       </a>
-      <a href="bookings.html">
+      <a href="bookings.html" class="nav-item">
         <span class="icon">📋</span>
-        รายการจอง
+        <span>รายการจอง</span>
       </a>
-      <a href="members.html">
+      <a href="members.html" class="nav-item">
         <span class="icon">⭐</span>
-        ข้อมูลสมาชิก
+        <span>ข้อมูลสมาชิก</span>
       </a>
-      <a href="vehicles.html" class="active">
+      <a href="vehicles.html" class="nav-item active">
         <span class="icon">🚙</span>
-        จัดการรถ
+        <span>จัดการรถ</span>
       </a>
-      <a href="drivers.html">
+      <a href="drivers.html" class="nav-item">
         <span class="icon">👨‍✈️</span>
-        จัดการคนขับ
+        <span>จัดการคนขับ</span>
       </a>
       
-      <div class="spacer"></div>
+      <div style="flex: 1;"></div>
       
-      <a href="index.html">
+      <a href="index.html" class="nav-item">
         <span class="icon">🏠</span>
-        กลับหน้าหลัก
+        <span>กลับหน้าหลัก</span>
       </a>
-      <a href="#" id="logoutBtn" class="logout-btn">
+      <a href="#" class="nav-item" id="logoutBtn" style="color: #f44336;">
         <span class="icon">🚪</span>
-        ออกจากระบบ
+        <span>ออกจากระบบ</span>
       </a>
     </nav>
-  </aside>
+  </div>
 
   <!-- ===== Main Content ===== -->
   <main class="main-content">
