@@ -108,18 +108,21 @@ function displayMembers(members) {
     return;
   }
 
-  let html = '<div class="members-table">';
-  
-  // Table Header
-  html += `
-    <div class="table-row header">
-      <div class="table-cell">ชื่อ-นามสกุล</div>
-      <div class="table-cell">เบอร์โทร</div>
-      <div class="table-cell">คะแนน</div>
-      <div class="table-cell">การจอง</div>
-      <div class="table-cell">สถานะ</div>
-      <div class="table-cell">จัดการ</div>
-    </div>
+  let html = `
+    <div class="table-wrapper">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>ชื่อ-นามสกุล</th>
+            <th>รหัสบัตร</th>
+            <th>เบอร์โทร</th>
+            <th>คะแนน</th>
+            <th>การจอง</th>
+            <th>สถานะ</th>
+            <th>จัดการ</th>
+          </tr>
+        </thead>
+        <tbody>
   `;
 
   // Table Body
@@ -132,42 +135,55 @@ function displayMembers(members) {
     });
 
     const statusBadge = member.status === 'active' ? 
-      '<span class="status-badge active">✅ ใช้งาน</span>' : 
-      '<span class="status-badge inactive">❌ ระงับ</span>';
+      '<span class="badge badge-success">✅ ใช้งาน</span>' : 
+      '<span class="badge badge-danger">❌ ระงับ</span>';
 
     html += `
-      <div class="table-row">
-        <div class="table-cell">
-          <strong>${member.fullName}</strong><br>
-          <small style="color: #7f8c8d;">รหัส: ${member.idCard}</small><br>
-          <small style="color: #7f8c8d;">สมัคร: ${dateStr}</small>
-        </div>
-        <div class="table-cell">
-          📞 ${member.phone}<br>
-          <small>${member.email || '-'}</small>
-        </div>
-        <div class="table-cell">
-          <strong style="color: #9C27B0;">💎 ${member.points || 0}</strong>
-        </div>
-        <div class="table-cell">
-          <strong style="color: #2196F3;">📋 ${member.totalBookings || 0}</strong> ครั้ง
-        </div>
-        <div class="table-cell">
+      <tr>
+        <td>
+          <div class="member-name">
+            <strong>${member.fullName}</strong>
+            <small>สมัคร: ${dateStr}</small>
+          </div>
+        </td>
+        <td class="text-center">
+          <code>${member.idCard}</code>
+        </td>
+        <td>
+          <div class="contact-info">
+            <span>📞 ${member.phone}</span>
+            <small>${member.email || '-'}</small>
+          </div>
+        </td>
+        <td class="text-center">
+          <span class="badge badge-points">💎 ${member.points || 0}</span>
+        </td>
+        <td class="text-center">
+          <span class="badge badge-bookings">📋 ${member.totalBookings || 0}</span>
+        </td>
+        <td class="text-center">
           ${statusBadge}
-        </div>
-        <div class="table-cell">
-          <button class="btn-edit" onclick="openEditModal('${member.id}')">
-            ✏️ แก้ไข
-          </button>
-          <button class="btn-delete" onclick="deleteMember('${member.id}', '${member.fullName}')">
-            🗑️ ลบ
-          </button>
-        </div>
-      </div>
+        </td>
+        <td class="text-center">
+          <div class="action-buttons">
+            <button class="btn-action btn-edit" onclick="openEditModal('${member.id}')" title="แก้ไข">
+              ✏️
+            </button>
+            <button class="btn-action btn-delete" onclick="deleteMember('${member.id}', '${member.fullName}')" title="ลบ">
+              🗑️
+            </button>
+          </div>
+        </td>
+      </tr>
     `;
   });
 
-  html += '</div>';
+  html += `
+        </tbody>
+      </table>
+    </div>
+  `;
+  
   container.innerHTML = html;
 }
 
