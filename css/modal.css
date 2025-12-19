@@ -20,14 +20,39 @@
 .modal-box {
   background: white;
   border-radius: 15px;
-  padding: 30px;
+  padding: 25px;
   max-width: 90%;
   width: 450px;
-  max-height: 80vh;
+  max-height: 85vh;
   overflow-y: auto;
   box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
   animation: slideDown 0.3s;
   position: relative;
+  
+  /* Smooth scrolling */
+  scroll-behavior: smooth;
+  
+  /* Custom scrollbar */
+  scrollbar-width: thin;
+  scrollbar-color: #667eea #f0f0f0;
+}
+
+.modal-box::-webkit-scrollbar {
+  width: 6px;
+}
+
+.modal-box::-webkit-scrollbar-track {
+  background: #f0f0f0;
+  border-radius: 10px;
+}
+
+.modal-box::-webkit-scrollbar-thumb {
+  background: #667eea;
+  border-radius: 10px;
+}
+
+.modal-box::-webkit-scrollbar-thumb:hover {
+  background: #5568d3;
 }
 
 .modal-header {
@@ -67,13 +92,21 @@
 }
 
 .modal-body {
-  margin-bottom: 20px;
+  margin-bottom: 15px;
   color: #555;
-  line-height: 1.6;
+  line-height: 1.5;
+  overflow-y: auto;
+  max-height: calc(85vh - 200px); /* ให้พื้นที่สำหรับ header และ footer */
 }
 
 .modal-body p {
-  margin: 10px 0;
+  margin: 8px 0;
+}
+
+.modal-body hr {
+  margin: 12px 0;
+  border: none;
+  border-top: 1px solid #e0e0e0;
 }
 
 .modal-footer {
@@ -132,11 +165,19 @@
   background: #d5dbdd;
 }
 
-/* Success Modal */
+/* Modal Icons */
 .modal-icon {
-  font-size: 4em;
+  font-size: 3em;
   text-align: center;
-  margin-bottom: 20px;
+  margin-bottom: 15px;
+  line-height: 1;
+}
+
+/* ลด icon สำหรับ warning เพื่อให้เนื้อหาแสดงได้มากขึ้น */
+.modal-icon.warning {
+  color: #f39c12;
+  font-size: 2.5em;
+  margin-bottom: 10px;
 }
 
 .modal-icon.success {
@@ -145,10 +186,6 @@
 
 .modal-icon.error {
   color: #e74c3c;
-}
-
-.modal-icon.warning {
-  color: #f39c12;
 }
 
 .modal-icon.info {
@@ -403,18 +440,39 @@
 @media (max-width: 600px) {
   .modal-box {
     width: 95%;
-    padding: 20px;
+    padding: 18px;
+    max-height: 90vh; /* เพิ่ม height สำหรับ mobile */
   }
   
   .modal-title {
-    font-size: 1.3em;
+    font-size: 1.2em;
+  }
+  
+  .modal-icon {
+    font-size: 2.5em;
+    margin-bottom: 10px;
+  }
+  
+  .modal-icon.warning {
+    font-size: 2em; /* เล็กกว่าเดิมสำหรับ mobile */
+  }
+  
+  .modal-body {
+    max-height: calc(90vh - 180px);
+  }
+  
+  .modal-body p {
+    margin: 6px 0;
+    font-size: 0.95em;
   }
   
   .modal-footer {
     flex-direction: column;
+    margin-top: 10px;
   }
   
   .modal-btn {
     width: 100%;
+    padding: 12px 20px;
   }
 }
