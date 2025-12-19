@@ -56,7 +56,7 @@ function showAlert(message, title = 'แจ้งเตือน', type = 'info'
       </div>
       <div class="modal-footer">
         <button class="modal-btn modal-btn-primary" onclick="closeModal()">
-          ตรง
+          ตกลง
         </button>
       </div>
     </div>
@@ -91,6 +91,13 @@ function showConfirm(message, title = 'ยืนยัน', onConfirm, onCancel)
   `;
   
   overlay.classList.add('active');
+  
+  // ป้องกันการปิด modal เมื่อคลิกนอก modal
+  // ต้องกดปุ่มเท่านั้น
+  overlay.onclick = (e) => {
+    // ไม่ทำอะไร - บังคับให้กดปุ่ม
+    e.stopPropagation();
+  };
   
   // Store callbacks
   window.modalConfirmCallback = onConfirm;
@@ -260,12 +267,11 @@ function showBookingSummary(bookingData) {
   
   overlay.classList.add('active');
   
-  // ไม่ให้ปิดเมื่อคลิกนอก modal
+  // ป้องกันการปิด modal เมื่อคลิกนอก modal
+  // ต้องกดปุ่มยืนยันเท่านั้น
   overlay.onclick = (e) => {
-    if (e.target === overlay) {
-      // ไม่ทำอะไร - บังคับให้กดปุ่มยืนยัน
-      return;
-    }
+    // ไม่ทำอะไร - บังคับให้กดปุ่มยืนยัน
+    e.stopPropagation();
   };
 }
 
