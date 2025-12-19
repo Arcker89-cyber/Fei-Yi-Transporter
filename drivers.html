@@ -105,17 +105,46 @@
     </div>
 
     <!-- Search & Filter -->
-    <div class="filter-controls">
-      <input 
-        type="text" 
-        id="searchInput" 
-        placeholder="🔍 ค้นหาชื่อหรือเบอร์โทร..."
-      >
-      <select id="statusFilter">
-        <option value="all">ทุกสถานะ</option>
-        <option value="active">ใช้งานอยู่</option>
-        <option value="inactive">ไม่ใช้งาน</option>
-      </select>
+    <div class="content-card">
+      <div class="card-header">
+        <h2>🔍 ค้นหา & กรอง</h2>
+      </div>
+
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px;">
+        <div class="form-group">
+          <label for="searchName">👨‍✈️ ชื่อคนขับ</label>
+          <input 
+            type="text" 
+            id="searchName" 
+            placeholder="กรอกชื่อคนขับ"
+          >
+        </div>
+
+        <div class="form-group">
+          <label for="searchPhone">📞 เบอร์โทร</label>
+          <input 
+            type="tel" 
+            id="searchPhone" 
+            placeholder="08xxxxxxxx"
+          >
+        </div>
+
+        <div class="form-group">
+          <label for="statusFilter">✅ สถานะ</label>
+          <select id="statusFilter">
+            <option value="all">ทั้งหมด</option>
+            <option value="active">ใช้งานอยู่</option>
+            <option value="inactive">ไม่ใช้งาน</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>&nbsp;</label>
+          <button class="btn-primary" onclick="filterDrivers()" style="width: 100%;">
+            🔍 ค้นหา
+          </button>
+        </div>
+      </div>
     </div>
 
     <!-- Drivers List -->

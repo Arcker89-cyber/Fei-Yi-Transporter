@@ -105,23 +105,47 @@
     </div>
 
     <!-- Search & Filter -->
-    <div class="filter-controls">
-      <input 
-        type="text" 
-        id="searchInput" 
-        placeholder="🔍 ค้นหาทะเบียนรถ..."
-      >
-      <select id="typeFilter">
-        <option value="all">ทุกประเภท</option>
-        <option value="van">รถตู้</option>
-        <option value="bus">รถบัส</option>
-        <option value="vip">รถ VIP</option>
-      </select>
-      <select id="statusFilter">
-        <option value="all">ทุกสถานะ</option>
-        <option value="active">ใช้งานอยู่</option>
-        <option value="inactive">ไม่ใช้งาน</option>
-      </select>
+    <div class="content-card">
+      <div class="card-header">
+        <h2>🔍 ค้นหา & กรอง</h2>
+      </div>
+
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px;">
+        <div class="form-group">
+          <label for="searchInput">🚙 ทะเบียนรถ</label>
+          <input 
+            type="text" 
+            id="searchInput" 
+            placeholder="กรอกทะเบียนรถ"
+          >
+        </div>
+
+        <div class="form-group">
+          <label for="typeFilter">🚐 ประเภทรถ</label>
+          <select id="typeFilter">
+            <option value="all">ทั้งหมด</option>
+            <option value="van">รถตู้</option>
+            <option value="bus">รถบัส</option>
+            <option value="vip">รถ VIP</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="statusFilter">✅ สถานะ</label>
+          <select id="statusFilter">
+            <option value="all">ทั้งหมด</option>
+            <option value="active">ใช้งานอยู่</option>
+            <option value="inactive">ไม่ใช้งาน</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>&nbsp;</label>
+          <button class="btn-primary" onclick="filterVehicles()" style="width: 100%;">
+            🔍 ค้นหา
+          </button>
+        </div>
+      </div>
     </div>
 
     <!-- Vehicles List -->
