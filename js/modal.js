@@ -4,20 +4,20 @@
 function createModalContainer() {
   const existingModal = document.getElementById('modal-overlay');
   if (existingModal) {
-    return existingModal;
+    // ลบ event listeners เดิมออกก่อน
+    existingModal.replaceWith(existingModal.cloneNode(false));
   }
   
-  const overlay = document.createElement('div');
+  const overlay = document.getElementById('modal-overlay') || document.createElement('div');
   overlay.id = 'modal-overlay';
   overlay.className = 'modal-overlay';
-  document.body.appendChild(overlay);
   
-  // คลิกนอก modal เพื่อปิด
-  overlay.addEventListener('click', (e) => {
-    if (e.target === overlay) {
-      closeModal();
-    }
-  });
+  if (!overlay.parentNode) {
+    document.body.appendChild(overlay);
+  }
+  
+  // ไม่เพิ่ม event listener ที่นี่
+  // ให้แต่ละ modal function จัดการเอง
   
   return overlay;
 }
@@ -63,6 +63,13 @@ function showAlert(message, title = 'แจ้งเตือน', type = 'info'
   `;
   
   overlay.classList.add('active');
+  
+  // Alert modal สามารถปิดได้เมื่อคลิกนอก modal
+  overlay.onclick = (e) => {
+    if (e.target === overlay) {
+      closeModal();
+    }
+  };
 }
 
 // แสดง Confirm Modal
@@ -95,8 +102,12 @@ function showConfirm(message, title = 'ยืนยัน', onConfirm, onCancel)
   // ป้องกันการปิด modal เมื่อคลิกนอก modal
   // ต้องกดปุ่มเท่านั้น
   overlay.onclick = (e) => {
-    // ไม่ทำอะไร - บังคับให้กดปุ่ม
-    e.stopPropagation();
+    // ไม่ปิดเมื่อคลิกที่ overlay
+    if (e.target === overlay) {
+      e.preventDefault();
+      e.stopPropagation();
+      return false;
+    }
   };
   
   // Store callbacks
@@ -270,8 +281,12 @@ function showBookingSummary(bookingData) {
   // ป้องกันการปิด modal เมื่อคลิกนอก modal
   // ต้องกดปุ่มยืนยันเท่านั้น
   overlay.onclick = (e) => {
-    // ไม่ทำอะไร - บังคับให้กดปุ่มยืนยัน
-    e.stopPropagation();
+    // ไม่ปิดเมื่อคลิกที่ overlay
+    if (e.target === overlay) {
+      e.preventDefault();
+      e.stopPropagation();
+      return false;
+    }
   };
 }
 
