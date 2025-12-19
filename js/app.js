@@ -183,25 +183,25 @@ document.getElementById("bookBtn").addEventListener("click", async () => {
 
     // สร้างข้อความยืนยัน
     let confirmMsg = `
-      <div style="text-align: left;">
-        <p><strong>📅 วันที่:</strong> ${formattedDate}</p>
-        <p><strong>🕐 เวลา:</strong> ${selectedOption.dataset.time}</p>
-        <p><strong>📍 เส้นทาง:</strong> ${selectedOption.dataset.route}</p>
-        <p><strong>👤 ชื่อ:</strong> ${name}</p>
-        <p><strong>📞 เบอร์:</strong> ${phone}</p>
-        <p><strong>💺 จำนวนที่นั่ง:</strong> ${requestedSeats} ที่นั่ง</p>
-        <hr style="margin: 15px 0;">
-        <p><strong>💰 ราคาต่อที่นั่ง:</strong> ฿${basePrice.toLocaleString()}</p>
+      <div style="text-align: left; font-size: 0.95em;">
+        <p style="margin: 6px 0;"><strong>📅 วันที่:</strong> ${formattedDate}</p>
+        <p style="margin: 6px 0;"><strong>🕐 เวลา:</strong> ${selectedOption.dataset.time}</p>
+        <p style="margin: 6px 0;"><strong>📍 เส้นทาง:</strong> ${selectedOption.dataset.route}</p>
+        <p style="margin: 6px 0;"><strong>👤 ชื่อ:</strong> ${name}</p>
+        <p style="margin: 6px 0;"><strong>📞 เบอร์:</strong> ${phone}</p>
+        <p style="margin: 6px 0;"><strong>💺 จำนวนที่นั่ง:</strong> ${requestedSeats} ที่นั่ง</p>
+        <hr style="margin: 10px 0; border: none; border-top: 1px solid #e0e0e0;">
+        <p style="margin: 6px 0;"><strong>💰 ราคาต่อที่นั่ง:</strong> ฿${basePrice.toLocaleString()}</p>
     `;
 
     if (isMemberBooking && totalDiscount > 0) {
       confirmMsg += `
-        <p style="color: #27ae60;"><strong>🎁 ส่วนลดสมาชิก:</strong> -฿${totalDiscount.toLocaleString()} (${memberDiscount}%)</p>
+        <p style="margin: 6px 0; color: #27ae60;"><strong>🎁 ส่วนลดสมาชิก:</strong> -฿${totalDiscount.toLocaleString()} (${memberDiscount}%)</p>
       `;
     }
 
     confirmMsg += `
-        <p style="font-size: 1.2em; color: #667eea;"><strong>รวมทั้งสิ้น:</strong> ฿${totalPrice.toLocaleString()}</p>
+        <p style="margin: 8px 0 0 0; font-size: 1.15em; color: #667eea;"><strong>รวมทั้งสิ้น:</strong> ฿${totalPrice.toLocaleString()}</p>
       </div>
     `;
 
