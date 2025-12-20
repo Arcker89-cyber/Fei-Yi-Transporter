@@ -6,7 +6,7 @@
 
 body {
   font-family: 'Sarabun', 'Noto Sans Thai', sans-serif;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #2563eb 0%, #1e40af 100%);
   min-height: 100vh;
   padding: 20px;
   padding-bottom: 120px; /* Space for footer */
@@ -266,7 +266,7 @@ main {
 }
 
 .card h2 {
-  color: #667eea;
+  color: #2563eb;
   margin-bottom: 20px;
   font-size: 1.4em;
   border-bottom: 2px solid #f0f0f0;
@@ -294,7 +294,7 @@ input, select {
 
 input:focus, select:focus {
   outline: none;
-  border-color: #667eea;
+  border-color: #2563eb;
   box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
 }
 
@@ -307,7 +307,7 @@ select {
 button {
   width: 100%;
   padding: 14px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #2563eb 0%, #1e40af 100%);
   color: white;
   border: none;
   border-radius: 8px;
@@ -360,7 +360,7 @@ footer {
   bottom: 0;
   left: 0;
   right: 0;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #2563eb 0%, #1e40af 100%);
   color: white;
   padding: 15px 20px;
   box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.2);
@@ -419,7 +419,7 @@ footer {
 }
 
 .admin-container h2 {
-  color: #667eea;
+  color: #2563eb;
   margin-bottom: 30px;
   text-align: center;
   font-size: 1.8em;
@@ -450,7 +450,7 @@ footer {
 }
 
 .nav-link.active {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #2563eb 0%, #1e40af 100%);
   color: white;
 }
 
@@ -534,7 +534,7 @@ footer {
   padding: 15px;
   border-radius: 8px;
   margin-bottom: 10px;
-  border-left: 4px solid #667eea;
+  border-left: 4px solid #2563eb;
 }
 
 .trip-item.inactive {
@@ -557,7 +557,7 @@ footer {
   padding: 10px;
   background: #f0f0f0;
   border-radius: 5px;
-  color: #667eea;
+  color: #2563eb;
 }
 
 .trip-item p {
@@ -566,7 +566,7 @@ footer {
 }
 
 .trip-item strong {
-  color: #667eea;
+  color: #2563eb;
 }
 
 /* ===== Responsive ===== */
@@ -666,7 +666,7 @@ footer {
 
 .loading {
   border: 3px solid #f3f3f3;
-  border-top: 3px solid #667eea;
+  border-top: 3px solid #2563eb;
   border-radius: 50%;
   width: 40px;
   height: 40px;
