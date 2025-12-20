@@ -9,6 +9,9 @@
   <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/admin-style.css">
   <link rel="stylesheet" href="css/custom-modal.css">
+  
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 </head>
 <body>
 
@@ -94,6 +97,56 @@
           <h3 id="totalSeatsBooked">-</h3>
           <p>ที่นั่งที่จองแล้ว</p>
         </div>
+      </div>
+      
+      <!-- New Stats for Revenue -->
+      <div class="stat-card">
+        <div class="stat-icon" style="background: #27ae60;">💰</div>
+        <div class="stat-info">
+          <h3 id="todayRevenue">-</h3>
+          <p>รายได้วันนี้</p>
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-icon" style="background: #e74c3c;">💵</div>
+        <div class="stat-info">
+          <h3 id="monthRevenue">-</h3>
+          <p>รายได้เดือนนี้</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Analytics Charts -->
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(450px, 1fr)); gap: 20px; margin-bottom: 20px;">
+      <!-- Revenue Chart -->
+      <div class="content-card">
+        <div class="card-header">
+          <h2>📈 รายได้รายวัน (7 วันย้อนหลัง)</h2>
+        </div>
+        <div style="padding: 20px;">
+          <canvas id="revenueChart" height="200"></canvas>
+        </div>
+      </div>
+
+      <!-- Bookings Chart -->
+      <div class="content-card">
+        <div class="card-header">
+          <h2>📊 ยอดจองรายวัน (7 วันย้อนหลัง)</h2>
+        </div>
+        <div style="padding: 20px;">
+          <canvas id="bookingsChart" height="200"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <!-- Top Routes -->
+    <div class="content-card">
+      <div class="card-header">
+        <h2>🏆 Top 5 รอบรถที่ได้รับความนิยม</h2>
+      </div>
+      <div id="topRoutes" class="loading-container">
+        <div class="loading"></div>
       </div>
     </div>
 
